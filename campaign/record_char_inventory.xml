@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="charsheet_inventory_contents" merge="join">
+		<sheetdata>
+			<number_static name="encumbrancebulky" source="encumbrance.bulkyitems">
+				<anchored to="encumbranceanchor" width="60" height="30">
+					<top />
+					<left anchor="right" relation="relative" offset="10" />
+				</anchored>
+			</number_static>
+			<label_fieldtop name="encumbrancebulky_label">
+				<anchored to="encumbrancebulky" offset="8,1" />
+				<static textres="char_label_encbulky" />
+			</label_fieldtop>
+			<number_static name="encumbrancesupply" source="encumbrance.supply">
+				<anchored to="encumbranceanchor" width="60" height="30">
+					<top />
+					<left anchor="right" relation="relative" offset="10" />
+				</anchored>
+			</number_static>
+			<label_fieldtop name="encumbrancesupply_label">
+				<anchored to="encumbrancesupply" offset="8,1" />
+				<static textres="char_label_encsupply" />
+			</label_fieldtop>
+		</sheetdata>
+	</windowclass>
+</root>

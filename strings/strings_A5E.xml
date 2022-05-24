@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+	<!-- Common -->
+	<string name="destiny">Destiny</string>
+
+	<!-- Party Sheet -->
+	<string name="ps_label_race">Htg</string>
+
+	<!-- Modifiers -->
+	<string name="modifier_category_expertise">Expertise</string>
+	<string name="modifier_label_EXP_D4">1d4</string>
+	<string name="modifier_label_EXP_D6">1d6</string>
+	<string name="modifier_label_EXP_D8">1d8</string>
+	<string name="modifier_label_EXP_D10">1d10</string>
+	<string name="modifier_label_EXP_D12">1d12</string>
+
+	<!-- Characters - Main -->
+	<string name="char_label_race">HERITAGE</string>
+	<string name="char_build_title_selectgifts">Select Gift</string>
+	<string name="char_build_message_selectgifts">Choose %s gift from the list below.</string>
+
+	<!-- Character - Abilities -->
+	<string name="char_abilities_message_raceadd">Heritage '%s' added to '%s'.</string>
+	<string name="char_abilities_message_cultureadd">Culture '%s' added to '%s'.</string>
+	<string name="char_abilities_message_destinyadd">Destiny '%s' added to '%s'.</string>
+	<string name="char_abilities_message_goldadd">Starting gold for %s added to '%s'. (%d)</string>
+
+	<!-- Character - Inventory -->
+	<string name="char_label_encbulky">Bulky Items</string>
+	<string name="char_label_encsupply">Supply</string>
+
+	<!-- Character - Notes -->
+	<string name="char_label_notes_connections">CONNECTIONS</string>
+	<string name="char_label_notes_memento">MEMENTO</string>
+	<string name="char_label_notes_destiny">DESTINY</string>
+	<string name="char_label_notes_motivation">MOTIVATION</string>
+
+	<!-- Character - Actions -->
+	<string name="power_label_pactmagiclevel">Lvl</string>
+	<string name="power_label_pactmagicpoints">Pts</string>
+
+	<!-- Pregens -->
+	<string name="pregen_label_race">Heritage</string>
+
+	<!-- Destinies -->
+	<string name="destiny_header_features">FEATURES</string>
+	<string name="destiny_header_inspirationfeature">INSPIRATION FEATURE</string>
+	<string name="destiny_header_fulfillmentfeature">FULFILLMENT FEATURE</string>
+
+	<!-- Heritages -->
+	<string name="race_header_traits">TRAITS</string>
+	<string name="race_header_heritagegifts">HERITAGE GIFTS</string>
+	<string name="race_header_paragongifts">PARAGON GIFTS</string>
+	<string name="race_header_cultures">CULTURES</string>
+
+	<!-- Feats -->
+	<string name="feat_label_type">Type</string>
+	<string name="feat_label_tradition">Tradition</string>
+	<string name="feat_label_degree">Degree</string>
+	<string name="feat_label_action">Action</string>
+	<string name="feat_label_exertion">Exertion</string>
+
+	<!-- Skills -->
+	<string name="skill_value_culture">Culture</string>
+	<string name="skill_value_engineering">Engineering</string>
+
+	<!-- NPCs -->
+	<string name="npc_label_proficiency">Proficiency</string>
+	<string name="npc_label_maneuver">Maneuver DC</string>
+
+	<!-- Reference -->
+	<string name="ref_label_rare">Rare</string>
+	<string name="ref_label_source">Classes</string>
+
+	<string name="ref_type_race">Heritage</string>
+	<string name="ref_type_racialtrait">Heritage Trait</string>
+	<string name="ref_type_culture">Culture</string>
+	<string name="ref_type_culturaltrait">Cultural Trait</string>
+	<string name="ref_type_destiny">Destiny</string>
+	<string name="ref_type_destinyfeature">Destiny Feature</string>
+
+	<!-- Library - Master Index -->
+	<string name="library_recordtype_label_culture">Cultures</string>
+	<string name="library_recordtype_label_destiny">Destinies</string>
+	<string name="library_recordtype_label_race">Heritages</string>
+
+	<string name="library_recordtype_empty_race">&#171; New Heritage &#187;</string>
+	<string name="library_recordtype_empty_racialtrait">&#171; New Heritage Trait &#187;</string>
+	<string name="library_recordtype_empty_heritagegift">&#171; New Heritage Gift &#187;</string>
+	<string name="library_recordtype_empty_paragongift">&#171; New Paragon Gift &#187;</string>
+	<string name="library_recordtype_empty_culture">&#171; New Culture &#187;</string>
+	<string name="library_recordtype_empty_culturaltrait">&#171; New Cultural Trait &#187;</string>
+	<string name="library_recordtype_empty_destiny">&#171; New Destiny &#187;</string>
+	<string name="library_recordtype_empty_inspirationfeature">&#171; New Inspiration Feature &#187;</string>
+	<string name="library_recordtype_empty_fulfillmentfeature">&#171; New Fulfillment Feature &#187;</string>
+</root>

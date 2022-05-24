@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="power_slots_cast">
+		<script file="campaign/scripts/power_slots_cast.lua" />
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+
+			<label_charframetop name="slotstitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<icons>char_powers</icons>
+				<static textres="power_label_spellslots" />
+			</label_charframetop>
+
+			<label name="spellslots_label">
+				<anchored width="80">
+					<top parent="columnanchor" anchor="bottom" relation="current" offset="7" />
+					<left offset="10" />
+				</anchored>
+				<static textres="power_label_spellcastingslots" />
+			</label>
+			<power_slots_list name="spellslots">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="7" />
+					<left offset="90" />
+					<right offset="-50" />
+				</anchored>
+			</power_slots_list>
+
+			<!-- Level Up -->
+ 			<label name="pactmagicslots_label">
+				<anchored width="80">
+					<top parent="columnanchor" anchor="bottom" relation="current" offset="7" />
+					<left offset="10" />
+				</anchored>
+				<static textres="power_label_pactmagicslots" />
+			</label>
+ 			<buttongroup_counter name="pactmagiccounter">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="7" />
+					<left offset="90" />
+				</anchored>
+				<maxslotperrow>10</maxslotperrow>
+			</buttongroup_counter>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="power_slots_prep">
+		<script>
+			function onInit()
+				onModeChanged();
+			end
+
+			function onModeChanged()
+				local nodeChar = getDatabaseNode();
+				local sMode = DB.getValue(nodeChar, "powermode", "");
+				if sMode == "preparation" then
+					parentcontrol.setVisible(true);
+				else
+					parentcontrol.setVisible(false);
+				end
+			end
+		</script>
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+
+			<label_charframetop name="slotstitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="15" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<icons>char_powers</icons>
+				<static textres="power_label_spellslots" />
+			</label_charframetop>
+
+			<label name="spellslots_label">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="current" offset="17" />
+					<left offset="10" />
+					<right anchor="center" offset="-120" />
+				</anchored>
+				<static textres="power_label_spellcastingslots" />
+			</label>
+			<genericcontrol name="anchor_spellslots">
+				<anchored width="0" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="17" />
+					<left anchor="center" offset="-130" />
+				</anchored>
+				<disabled />
+			</genericcontrol>
+			<number_spellslots name="spellslots1" source="powermeta.spellslots1.max" />
+			<number_spellslots name="spellslots2" source="powermeta.spellslots2.max" />
+			<number_spellslots name="spellslots3" source="powermeta.spellslots3.max" />
+			<number_spellslots name="spellslots4" source="powermeta.spellslots4.max" />
+			<number_spellslots name="spellslots5" source="powermeta.spellslots5.max" />
+			<number_spellslots name="spellslots6" source="powermeta.spellslots6.max" />
+			<number_spellslots name="spellslots7" source="powermeta.spellslots7.max" />
+			<number_spellslots name="spellslots8" source="powermeta.spellslots8.max" />
+			<number_spellslots name="spellslots9" source="powermeta.spellslots9.max" />
+			<label_fieldtop name="spellslots1_label">
+				<anchored to="spellslots1" />
+				<static>1</static>
+			</label_fieldtop>
+			<label_fieldtop name="spellslots2_label">
+				<anchored to="spellslots2" />
+				<static>2</static>
+			</label_fieldtop>
+			<label_fieldtop name="spellslots3_label">
+				<anchored to="spellslots3" />
+				<static>3</static>
+			</label_fieldtop>
+			<label_fieldtop name="spellslots4_label">
+				<anchored to="spellslots4" />
+				<static>4</static>
+			</label_fieldtop>
+			<label_fieldtop name="spellslots5_label">
+				<anchored to="spellslots5" />
+				<static>5</static>
+			</label_fieldtop>
+			<label_fieldtop name="spellslots6_label">
+				<anchored to="spellslots6" />
+				<static>6</static>
+			</label_fieldtop>
+			<label_fieldtop name="spellslots7_label">
+				<anchored to="spellslots7" />
+				<static>7</static>
+			</label_fieldtop>
+			<label_fieldtop name="spellslots8_label">
+				<anchored to="spellslots8" />
+				<static>8</static>
+			</label_fieldtop>
+			<label_fieldtop name="spellslots9_label">
+				<anchored to="spellslots9" />
+				<static>9</static>
+			</label_fieldtop>
+
+			<label name="pactmagicslots_label">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="current" offset="17" />
+					<left offset="10" />
+					<right anchor="center" offset="-120" />
+				</anchored>
+				<static textres="power_label_pactmagicslots" />
+			</label>
+			<genericcontrol name="anchor_pactmagicslots">
+				<anchored width="0" height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="17" />
+					<left anchor="center" offset="-130" />
+				</anchored>
+				<disabled />
+			</genericcontrol>
+			<number_pactmagicslots name="pactmagicpoints" source="powermeta.pactmagicpoints.max" />
+			<number_pactmagicslots name="pactmagiclevel" source="powermeta.pactmagiclevel" />
+			<label_fieldtop name="pactmagicpoints_label">
+				<anchored to="pactmagicpoints" />
+				<static textres="power_label_pactmagicpoints" />
+			</label_fieldtop>
+			<label_fieldtop name="pactmagiclevel_label">
+				<anchored to="pactmagiclevel" />
+				<static textres="power_label_pactmagiclevel" />
+			</label_fieldtop>
+
+			<genericcontrol name="spacer">
+				<anchored height="0">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="3" />
+					<left />
+					<right />
+				</anchored>
+				<disabled />
+			</genericcontrol>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="power_groupdetail" merge="join">
+		<placement>
+			<size width="430" height="340" />
+		</placement>
+	</windowclass>
+
+	<windowclass name="power_stats" merge="join">
+		<sheetdata>
+			<label_column name="rare_label">
+				<static textres="ref_label_rare" />
+			</label_column>
+			<button_checkbox_columnh name="rare" />
+		</sheetdata>
+	</windowclass>
+</root>

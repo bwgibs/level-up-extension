@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="ref_race_stats">
+		<margins control="0,0,0,7" />
+		<script>
+			function onInit()
+				update();
+			end
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				traits.update(bReadOnly);
+				heritagegifts.update(bReadOnly);
+				paragongifts.update(bReadOnly);
+				cultures.update(bReadOnly);
+			end
+		</script>
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+
+			<header_column name="traits_header">
+				<static textres="race_header_traits"/>
+				<center />
+			</header_column>
+			<button_iedit name="traits_iedit">
+				<anchored to="traits_header" position="righthigh" offset="-20,0" />
+				<target>traits</target>
+			</button_iedit>
+			<button_iadd name="traits_iadd">
+				<anchored to="traits_iedit" position="lefthigh" offset="5,0" />
+				<target>traits</target>
+			</button_iadd>
+			<list_column name="traits">
+				<datasource>.traits</datasource>
+				<class>ref_racial_trait</class>
+			</list_column>
+
+			<header_column name="heritagegifts_header">
+				<static textres="race_header_heritagegifts"/>
+				<center />
+			</header_column>
+			<button_iedit name="heritagegifts_iedit">
+				<anchored to="heritagegifts_header" position="righthigh" offset="-20,0" />
+				<target>heritagegifts</target>
+			</button_iedit>
+			<button_iadd name="heritagegifts_iadd">
+				<anchored to="heritagegifts_iedit" position="lefthigh" offset="5,0" />
+				<target>heritagegifts</target>
+			</button_iadd>
+			<list_column name="heritagegifts">
+				<datasource>.heritagegifts</datasource>
+				<class>ref_racial_trait</class>
+			</list_column>
+
+			<header_column name="paragongifts_header">
+				<static textres="race_header_paragongifts"/>
+				<center />
+			</header_column>
+			<button_iedit name="paragongifts_iedit">
+				<anchored to="paragongifts_header" position="righthigh" offset="-20,0" />
+				<target>paragongifts</target>
+			</button_iedit>
+			<button_iadd name="paragongifts_iadd">
+				<anchored to="paragongifts_iedit" position="lefthigh" offset="5,0" />
+				<target>paragongifts</target>
+			</button_iadd>
+			<list_column name="paragongifts">
+				<datasource>.paragongifts</datasource>
+				<class>ref_racial_trait</class>
+			</list_column>
+
+			<header_column name="cultures_header">
+				<static textres="race_header_cultures"/>
+				<center />
+			</header_column>
+			<button_iedit name="cultures_iedit">
+				<anchored to="cultures_header" position="righthigh" offset="-20,0" />
+				<target>cultures</target>
+			</button_iedit>
+			<button_iadd name="cultures_iadd">
+				<anchored to="cultures_iedit" position="lefthigh" offset="5,0" />
+				<target>cultures</target>
+			</button_iadd>
+			<list_column name="cultures">
+				<datasource>.cultures</datasource>
+				<class>ref_culture</class>
+			</list_column>
+		</sheetdata>
+	</windowclass>
+
+	<windowclass name="ref_culture">
+		<margins control="0,0,0,2" />
+		<sheetdata>
+			<anchor_listitem_column_right name="rightanchor" />
+			<link_listitem_column name="shortcut">
+				<class>reference_culture</class>
+			</link_listitem_column>
+			<button_listitem_column_delete name="idelete" />
+
+			<string_listitem_column_name name="name">
+				<empty textres="library_recordtype_empty_culture" />
+			</string_listitem_column_name>
+		</sheetdata>
+	</windowclass>
+</root>

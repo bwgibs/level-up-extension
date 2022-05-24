@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+	<!-- Level Up -->
+    <icon name="sidebar_icon_recordtype_culture" file="graphics/sidebar/sidebar_icon_story.png" />
+    <icon name="sidebar_icon_recordtype_destiny" file="graphics/sidebar/sidebar_icon_quest.png" />
+</root>

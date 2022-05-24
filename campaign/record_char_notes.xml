@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="charsheet_notes_contents">
+		<margins control="0,0,0,2" />
+		<script>
+			function onDrop(x, y, draginfo)
+				if draginfo.isType("shortcut") then
+					local sClass, sRecord = draginfo.getShortcutData();
+
+					if sClass == "reference_destiny" then
+						CharManager.addInfoDB(getDatabaseNode(), sClass, sRecord);
+						return true;
+					end
+				end
+			end
+		</script>
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+
+			<metalplate name="detailstitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+			</metalplate>
+			<stringu name="gender">
+				<anchored to="detailstitle" position="insidetopleft" offset="0,25" width="70" height="20" />
+			</stringu>
+			<stringu name="age">
+				<anchored to="gender" position="righthigh" offset="5,0" width="70" height="20" />
+			</stringu>
+			<stringu name="height">
+				<anchored to="age" position="righthigh" offset="5,0" width="70" height="20" />
+			</stringu>
+			<stringu name="weight">
+				<anchored to="height" position="righthigh" offset="5,0" width="70" height="20" />
+			</stringu>
+			<stringu name="size">
+				<anchored to="weight" position="righthigh" offset="5,0" width="70" height="20" />
+				<delaykeyupdate />
+			</stringu>
+			<label_charfieldtop>
+				<anchored to="gender" offset="0,5" />
+				<static textres="char_label_gender" />
+			</label_charfieldtop>
+			<label_charfieldtop>
+				<anchored to="age" offset="0,5" />
+				<static textres="char_label_age" />
+			</label_charfieldtop>
+			<label_charfieldtop>
+				<anchored to="height" offset="0,5" />
+				<static textres="char_label_height" />
+			</label_charfieldtop>
+			<label_charfieldtop>
+				<anchored to="weight" offset="0,5" />
+				<static textres="char_label_weight" />
+			</label_charfieldtop>
+			<label_charfieldtop>
+				<anchored to="size" offset="0,5" />
+				<static textres="char_label_size" />
+			</label_charfieldtop>
+
+			<metalplate name="detailstitle2">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="35" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+			</metalplate>
+			<stringu name="alignment">
+				<anchored to="detailstitle2" position="belowleft" offset="0,5" height="20">
+					<right anchor="center" offset="-5" />
+				</anchored>
+			</stringu>
+			<label_charfieldtop>
+				<anchored to="alignment" offset="0,5" />
+				<static textres="char_label_alignment" />
+			</label_charfieldtop>
+			<stringu name="deity">
+				<anchored to="detailstitle2" position="belowright" offset="0,5" height="20">
+					<left anchor="center" offset="5" />
+				</anchored>
+			</stringu>
+			<label_charfieldtop>
+				<anchored to="deity" offset="0,5" />
+				<static textres="char_label_deity" />
+			</label_charfieldtop>
+
+			<label_charframetop name="connectionstitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="35" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="char_label_notes_connections" />
+			</label_charframetop>
+			<string_char_background name="connections">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+			</string_char_background>
+			<label_charframetop name="mementotitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="char_label_notes_memento" />
+			</label_charframetop>
+			<string_char_background name="memento">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+			</string_char_background>
+			<label_charframetop name="destinytitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="char_label_notes_destiny" />
+			</label_charframetop>
+			<linkfield name="destinylink">
+				<anchored to="destinytitle" position="belowright" offset="0,5" width="20" height="20" />
+				<description field="destiny" />
+				<closetoggle />
+				<invisible />
+				<script>
+					function onInit()
+						onValueChanged();
+					end
+					function onValueChanged()
+						if isEmpty() then
+							setVisible(false);
+						else
+							setVisible(true);
+						end
+					end
+				</script>
+			</linkfield>
+			<string_char_background name="destiny">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="15" />
+					<right parent="destinylink" anchor="left" offset="-5" />
+				</anchored>
+			</string_char_background>
+			<label_charframetop name="motivationtitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="char_label_notes_motivation" />
+			</label_charframetop>
+			<string_char_background name="motivation">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+			</string_char_background>
+
+			<label_charframetop name="appearancetitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="char_label_appearance" />
+			</label_charframetop>
+			<stringu name="appearance">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+			</stringu>
+
+			<label_charframetop name="notestitle">
+				<anchored height="20">
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="10" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<static textres="char_label_notes" />
+			</label_charframetop>
+			<stringu name="notes">
+				<anchored>
+					<top parent="columnanchor" anchor="bottom" relation="relative" offset="5" />
+					<left offset="15" />
+					<right offset="-10" />
+				</anchored>
+				<multilinespacing>20</multilinespacing>
+			</stringu>
+		</sheetdata>
+	</windowclass>
+</root>

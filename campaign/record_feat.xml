@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="reference_feat">
+		<frame>recordsheet</frame>
+		<placement>
+			<size width="350" height="350" />
+		</placement>
+		<sizelimits>
+			<minimum width="300" height="300" />
+			<dynamic />
+		</sizelimits>
+		<minimize>minimized_reference</minimize>
+		<tooltip field="name" />
+		<nodelete />
+		<playercontrol />
+		<sharable />
+		<script file="common/scripts/record_window.lua" />
+		<sheetdata>
+			<sub_record_header name="header">
+				<class>ref_feat_header</class>
+			</sub_record_header>
+
+			<frame_record_content />
+
+			<subwindow_record name="main">
+				<class>feat_main</class>
+				<activate />
+			</subwindow_record>
+
+			<scrollbar_record>
+				<target>main</target>
+			</scrollbar_record>
+
+			<resize_recordsheet />
+			<close_recordsheet />
+		</sheetdata>
+	</windowclass>
+	<windowclass name="ref_feat_header">
+		<margins control="0,0,0,2" />
+		<script>
+			function onInit()
+				update();
+			end
+			function update()
+				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
+				name.setReadOnly(bReadOnly);
+
+				local sType = DB.getValue(getDatabaseNode(), "type", "");
+				if sType ~= "" then
+					reftype.setValue(sType);
+				end
+			end
+		</script>
+		<sheetdata>
+			<link_record_header>
+				<class>reference_feat</class>
+			</link_record_header>
+
+			<anchor_record_header_right />
+			<icon_record_locked />
+			<button_record_locked />
+
+			<string_record_name name="name">
+				<empty textres="library_recordtype_empty_feat" />
+			</string_record_name>
+			<label_reftype name="reftype">
+				<static textres="ref_type_feat" />
+			</label_reftype>
+		</sheetdata>
+	</windowclass>
+	<windowclass name="feat_main">
+		<margins control="0,0,0,2" />
+		<script file="campaign/scripts/feat_main.lua" />
+		<sheetdata>
+			<anchor_column name="columnanchor" />
+
+			<label_column name="type_label">
+				<static textres="feat_label_type" />
+			</label_column>
+			<string_columnh name="type">
+				<delaykeyupdate />
+				<script>
+					function onValueChanged()
+						window.update();
+					end
+				</script>
+			</string_columnh>
+
+			<line_column name="divider" />
+
+			<label_column name="tradition_label">
+				<static textres="feat_label_tradition" />
+			</label_column>
+			<string_columnh name="tradition">
+				<delaykeyupdate />
+				<script>
+					function onValueChanged()
+						window.onSummaryChanged();
+					end
+				</script>
+			</string_columnh>
+
+			<label_column name="degree_label">
+				<static textres="feat_label_degree" />
+			</label_column>
+			<string_columnh name="degree">
+				<delaykeyupdate />
+				<script>
+					function onValueChanged()
+						window.onSummaryChanged();
+					end
+				</script>
+			</string_columnh>
+
+			<label_column name="action_label">
+				<static textres="feat_label_action" />
+			</label_column>
+			<string_columnh name="action">
+				<delaykeyupdate />
+				<script>
+					function onValueChanged()
+						window.onSummaryChanged();
+					end
+				</script>
+			</string_columnh>
+
+			<label_column name="summary_label">
+				<anchored>
+					<top relation="relative" offset="7" />
+				</anchored>
+				<font>reference-b-large</font>
+			</label_column>
+
+			<label_column name="exertion_label">
+				<static textres="feat_label_exertion" />
+			</label_column>
+			<string_columnh name="exertion" />
+
+			<line_column name="divider2" />
+
+			<ft_columnh name="text" />
+		</sheetdata>
+	</windowclass>
+</root>

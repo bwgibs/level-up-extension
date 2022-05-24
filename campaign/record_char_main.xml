@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<!--
+  Please see the license.html file included with this distribution for
+  attribution and copyright information.
+-->
+
+<root>
+	<windowclass name="charsheet_main" merge="join">
+		<script>
+			function onDrop(x, y, draginfo)
+				if draginfo.isType("shortcut") then
+					local sClass, sRecord = draginfo.getShortcutData();
+
+					if StringManager.contains({"reference_class", "reference_race", "reference_culture", "reference_background"}, sClass) then
+						CharManager.addInfoDB(getDatabaseNode(), sClass, sRecord);
+						return true;
+					end
+				end
+			end
+
+			function onHealthChanged()
+				local sColor = ActorManager5E.getPCSheetWoundColor(getDatabaseNode());
+				wounds.setColor(sColor);
+			end
+		</script>
+	</windowclass>
+
+	<windowclass name="charsheet_classes" merge="join">
+		<sheetdata>
+			<buttoncontrol name="levelup" merge="delete" />
+		</sheetdata>
+	</windowclass>
+</root>
