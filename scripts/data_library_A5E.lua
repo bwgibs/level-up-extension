@@ -26,13 +26,43 @@ function sortNPCCRValues(aFilterValues)
 end
 
 function getNPCTypeValue(vNode)
-	local v = StringManager.trim(DB.getValue(vNode, "type", ""));
-	local sType = v:match("^[^(%s]+");
-	if sType then
-		v = StringManager.trim(sType);
+	local aTypes = StringManager.parseWords(DB.getValue(vNode, "type", ""):lower());
+
+	-- Vehicle or Siege Weapon
+	if aTypes[2] == "vehicle" or aTypes[2] == "weapon" then
+		aTypes[1] = aTypes[1] .. " " .. aTypes[2];
+		table.remove(aTypes, 2);
 	end
-	v = StringManager.capitalize(v);
-	return v;
+	
+	-- Swarm or Group
+	if (aTypes[1] == "swarm" or aTypes[1] == "group") and aTypes[2] == "of" then
+		if aTypes[3] == "medium" or DataCommon.creaturesize[aTypes[3]] then
+			table.remove(aTypes, 3);
+end
+		table.remove(aTypes, 2);
+	end
+
+	if #(aTypes) > 0 then
+		for k,v in ipairs(aTypes) do			
+			local sClass = StringManager.capitalizeAll(v);
+			if sClass then
+				-- Remove trailing 's' from plural types
+				if string.sub(sClass, -1) == "s" then
+					sClass = string.sub(sClass, 1, -2);
+				end
+				
+				aTypes[k] = sClass;
+			end
+		end
+		
+		-- Cleanup
+		for k,v in ipairs(aTypes) do
+			if v == "Or" then
+				table.remove(aTypes, k);
+			end
+		end
+	end
+	return aTypes;
 end
 
 function getItemRarityValue(vNode)

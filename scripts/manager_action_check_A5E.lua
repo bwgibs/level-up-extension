@@ -99,7 +99,7 @@ function modRoll(rSource, rTarget, rRoll)
 			local nFatigueMod, nFatigueCount = EffectManager5E.getEffectsBonus(rSource, {"FATIGUE"}, true);
 			if nFatigueCount > 0 then
 				bEffects = true;
-				if nFatigueMod >= 1 then
+				if nFatigueMod >= 2 then
 					bDIS = true;
 				end
 			end

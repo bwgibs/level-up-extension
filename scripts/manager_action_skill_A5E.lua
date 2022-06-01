@@ -143,6 +143,26 @@ function modRoll(rSource, rTarget, rRoll)
 				bEffects = true;
 				bDIS = true;
 			end
+			-- Level Up
+			-- Get fatigue modifiers
+			local nFatigueMod, nFatigueCount = EffectManager5E.getEffectsBonus(rSource, {"FATIGUE"}, true);
+			if nFatigueCount > 0 then
+				bEffects = true;
+				if nFatigueMod >= 2 then
+					bDIS = true;
+				end
+			end
+		end
+		-- Level Up
+		if StringManager.contains({ "intelligence", "wisdom", "charisma" }, sAbility) then
+			-- Get strife modifiers
+			local nStrifeMod, nStrifeCount = EffectManager5E.getEffectsBonus(rSource, {"STRIFE"}, true);
+			if nStrifeCount > 0 then
+				bEffects = true;
+				if nStrifeMod >= 1 then
+					bDIS = true;
+				end
+			end
 		end
 
 		-- Get ability modifiers
