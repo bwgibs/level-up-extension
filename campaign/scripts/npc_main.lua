@@ -63,6 +63,7 @@ function update()
 	actext.setReadOnly(bReadOnly);
 	hp.setReadOnly(bReadOnly);
 	hd.setReadOnly(bReadOnly);
+	updateControl("damagethreshold", bReadOnly);
 	speed.setReadOnly(bReadOnly);
 
 	updateControl("strength", bReadOnly);
