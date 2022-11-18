@@ -15,7 +15,7 @@ function updateEncumbranceLimit(nodeChar)
 	local nEncLimit = math.max(nStat, 0) * 5;
 
 	nEncLimit = nEncLimit * CharEncumbranceManager5E.getEncumbranceMult(nodeChar);
-
+	
 	DB.setValue(nodeChar, "encumbrance.encumbered", "number", nEncLimit);
 	DB.setValue(nodeChar, "encumbrance.encumberedheavy", "number", nEncLimit * 2);
 	DB.setValue(nodeChar, "encumbrance.max", "number", nEncLimit * 3);
@@ -32,41 +32,28 @@ function updateEncumbranceLimit(nodeChar)
 end
 
 function getEncumbranceMult(nodeChar)
-	local sSize = StringManager.trim(DB.getValue(nodeChar, "size", ""):lower());
+	local rActor = ActorManager.resolveActor(nodeChar);
+	local nActorSize = ActorCommonManager.getCreatureSizeDnD5(rActor);
 
-	local nSize = 2; -- Medium
-	if sSize == "tiny" then
-		nSize = 0;
-	elseif sSize == "small" then
-		nSize = 1;
-	elseif sSize == "large" then
-		nSize = 3;
-	elseif sSize == "huge" then
-		nSize = 4;
-	elseif sSize == "gargantuan" then
-		nSize = 5;
-	end
+	if CharManager.hasTrait(nodeChar, CharManager.TRAIT_POWERFUL_BUILD) then
+		nActorSize = nActorSize + 1;
+	elseif CharManager.hasTrait(nodeChar, CharManager.TRAIT_HIPPO_BUILD) then
+		nActorSize = nActorSize + 1;
 	-- Level Up
-	if CharManager.hasTrait(nodeChar, CharManager.TRAIT_POWERFUL_BUILD) or CharManager.hasTrait(nodeChar, TRAIT_HEAVY_LIFTER) then
-		nSize = nSize + 1;
+	elseif CharManager.hasTrait(nodeChar, TRAIT_HEAVY_LIFTER) then
+		nActorSize = nActorSize + 1;
 	end
-
+	
 	local nMult = 1; -- Both Small and Medium use a multiplier of 1
-	if nSize == 0 then
+	if nActorSize == -2 then
 		nMult = 0.5;
-	elseif nSize == 3 then
-		nMult = 2;
-	elseif nSize == 4 then
-		nMult = 4;
-	elseif nSize == 5 then
-		nMult = 8;
-	elseif nSize == 6 then
-		nMult = 16;
+	elseif nActorSize > 0 then
+		nMult = 2 ^ nActorSize;
 	end
 
 	if CharManager.hasFeature(nodeChar, CharManager.FEATURE_ASPECT_OF_THE_BEAR) then
 		nMult = nMult * 2;
 	end
-
+	
 	return nMult;
 end

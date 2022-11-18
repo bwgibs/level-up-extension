@@ -46,11 +46,10 @@ function getWoundPercent(v)
 	end
 
 	-- Level Up
-	local bBloodied = EffectManager5E.hasEffectCondition(rActor, "Bloodied");
-	if nPercentWounded >= 0.5 and not bBloodied then
-		EffectManager.addEffect("", "", nodeCT, { sName = "Bloodied", nDuration = 0 }, false);
-	elseif nPercentWounded < 0.5 and bBloodied then
-		EffectManager.removeEffect(nodeCT, "Bloodied");
+	if nPercentWounded >= 0.5 then
+		EffectManager.addCondition(rActor, "Bloodied");
+	elseif nPercentWounded < 0.5 then
+		EffectManager.removeCondition(rActor, "Bloodied");
 	end
 
 	return nPercentWounded, sStatus;
@@ -60,23 +59,23 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 	if not rDefender or not rRoll then
 		return nil, 0, 0, false, false;
 	end
-
+	
 	-- Base calculations
 	local sAttack = rRoll.sDesc;
-
-	local sAttackType = string.match(sAttack, "%[ATTACK.*%((%w+)%)%]");
-	local bOpportunity = string.match(sAttack, "%[OPPORTUNITY%]");
-	local nCover = tonumber(string.match(sAttack, "%[COVER %-(%d)%]")) or 0;
+	
+	local sAttackType = sAttack:match("%[ATTACK.*%((%w+)%)%]");
+	local bOpportunity = sAttack:match("%[OPPORTUNITY%]");
+	local nCover = tonumber(sAttack:match("%[COVER %-(%d)%]")) or 0;
 
 	local nDefense = 10;
 	local sDefenseStat = "dexterity";
 
-	local sNodeDefenderType, nodeDefender = ActorManager.getTypeAndNode(rDefender);
+	local nodeDefender = ActorManager.getCreatureNode(rDefender);
 	if not nodeDefender then
 		return nil, 0, 0, false, false;
 	end
 
-	if sNodeDefenderType == "pc" then
+	if ActorManager.isPC(rDefender) then
 		nDefense = DB.getValue(nodeDefender, "defenses.ac.total", 10);
 		sDefenseStat = DB.getValue(nodeDefender, "ac.sources.ability", "");
 		if sDefenseStat == "" then
@@ -86,7 +85,7 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 		nDefense = DB.getValue(nodeDefender, "ac", 10);
 	end
 	nDefenseStatMod = ActorManager5E.getAbilityBonus(rDefender, sDefenseStat);
-
+	
 	-- Effects
 	local nDefenseEffectMod = 0;
 	local bADV = false;
@@ -95,7 +94,7 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 		local nBonusAC = 0;
 		local nBonusStat = 0;
 		local nBonusSituational = 0;
-
+		
 		local aAttackFilter = {};
 		if sAttackType == "M" then
 			table.insert(aAttackFilter, "melee");
@@ -110,25 +109,25 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 		for _,v in pairs(aACEffects) do
 			nBonusAC = nBonusAC + v.mod;
 		end
-
+		
 		nBonusStat = ActorManager5E.getAbilityEffectsBonus(rDefender, sDefenseStat);
-		if (sNodeDefenderType == "pc") and (nBonusStat > 0) then
+		if ActorManager.isPC(rDefender) and (nBonusStat > 0) then
 			local sMaxDexBonus = DB.getValue(nodeDefender, "defenses.ac.dexbonus", "");
 			if sMaxDexBonus == "no" then
 				nBonusStat = 0;
 			elseif sMaxDexBonus == "max2" then
 				local nMaxEffectStatModBonus = math.max(2 - nDefenseStatMod, 0);
-				if nBonusStat > nMaxEffectStatModBonus then
-					nBonusStat = nMaxEffectStatModBonus;
+				if nBonusStat > nMaxEffectStatModBonus then 
+					nBonusStat = nMaxEffectStatModBonus; 
 				end
 			elseif sMaxDexBonus == "max3" then
 				local nMaxEffectStatModBonus = math.max(3 - nDefenseStatMod, 0);
-				if nBonusStat > nMaxEffectStatModBonus then
-					nBonusStat = nMaxEffectStatModBonus;
+				if nBonusStat > nMaxEffectStatModBonus then 
+					nBonusStat = nMaxEffectStatModBonus; 
 				end
 			end
 		end
-
+		
 		local bProne = false;
 		if EffectManager5E.hasEffect(rAttacker, "ADVATK", rDefender, true) then
 			bADV = true;
@@ -151,7 +150,7 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 		if EffectManager5E.hasEffect(rDefender, "Paralyzed", rAttacker) then
 			bADV = true;
 		end
-		if EffectManager5E.hasEffect(rDefender, "Prone", rAttacker) then
+		if EffectManager.hasCondition(rDefender, "Prone") then
 			bProne = true;
 		end
 		if EffectManager5E.hasEffect(rDefender, "Restrained", rAttacker) then
@@ -160,11 +159,10 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 		if EffectManager5E.hasEffect(rDefender, "Stunned", rAttacker) then
 			bADV = true;
 		end
-		if EffectManager5E.hasEffect(rDefender, "Unconscious", rAttacker) then
+		if EffectManager.hasCondition(rDefender, "Unconscious") then
 			bADV = true;
-			bProne = true;
 		end
-
+		
 		if bProne then
 			if sAttackType == "M" then
 				bADV = true;
@@ -172,7 +170,7 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 				bDIS = true;
 			end
 		end
-
+		
 		if nCover < 5 then
 			local aCover = EffectManager5E.getEffectsByType(rDefender, "SCOVER", aAttackFilter, rAttacker);
 			if #aCover > 0 or EffectManager5E.hasEffect(rDefender, "SCOVER", rAttacker) then
@@ -184,7 +182,7 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 				end
 			end
 		end
-
+		
 		-- Level Up
 		if EffectManager5E.hasEffect(rDefender, "Slowed", rAttacker) then
 			nBonusSituational = nBonusSituational - 2;
@@ -192,7 +190,7 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 
 		nDefenseEffectMod = nBonusAC + nBonusStat + nBonusSituational;
 	end
-
+	
 	-- Results
 	return nDefense, 0, nDefenseEffectMod, bADV, bDIS;
 end

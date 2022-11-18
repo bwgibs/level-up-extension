@@ -10,11 +10,11 @@ end
 
 function modAttack(rSource, rTarget, rRoll)
 	ActionAttack.clearCritState(rSource);
-
+	
 	local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
-
+	
 	-- Check for opportunity attack
 	local bOpportunity = ModifierManager.getKey("ATT_OPP") or Input.isShiftPressed();
 
@@ -25,18 +25,18 @@ function modAttack(rSource, rTarget, rRoll)
 	-- Check defense modifiers
 	local bCover = ModifierManager.getKey("DEF_COVER");
 	local bSuperiorCover = ModifierManager.getKey("DEF_SCOVER");
-
+	
 	if bSuperiorCover then
 		table.insert(aAddDesc, "[COVER -5]");
 	elseif bCover then
 		table.insert(aAddDesc, "[COVER -2]");
 	end
-
+	
 	local bADV = false;
 	local bDIS = false;
 	if rRoll.sDesc:match(" %[ADV%]") then
 		bADV = true;
-		rRoll.sDesc = rRoll.sDesc:gsub(" %[ADV%]", "");
+		rRoll.sDesc = rRoll.sDesc:gsub(" %[ADV%]", "");		
 	end
 	if rRoll.sDesc:match(" %[DIS%]") then
 		bDIS = true;
@@ -57,7 +57,7 @@ function modAttack(rSource, rTarget, rRoll)
 		if sModStat then
 			sActionStat = DataCommon.ability_stol[sModStat];
 		end
-
+		
 		-- Build attack filter
 		if sAttackType == "M" then
 			table.insert(aAttackFilter, "melee");
@@ -67,7 +67,7 @@ function modAttack(rSource, rTarget, rRoll)
 		if bOpportunity then
 			table.insert(aAttackFilter, "opportunity");
 		end
-
+		
 		-- Get attack effect modifiers
 		local bEffects = false;
 		local nEffectCount;
@@ -75,7 +75,7 @@ function modAttack(rSource, rTarget, rRoll)
 		if (nEffectCount > 0) then
 			bEffects = true;
 		end
-
+		
 		-- Get condition modifiers
 		if EffectManager5E.hasEffect(rSource, "ADVATK", rTarget) then
 			bADV = true;
@@ -115,7 +115,7 @@ function modAttack(rSource, rTarget, rRoll)
 			bEffects = true;
 			bDIS = true;
 		end
-		if EffectManager5E.hasEffectCondition(rSource, "Prone") and sAttackType == "M" then
+		if EffectManager.hasCondition(rSource, "Prone") then
 			bEffects = true;
 			bDIS = true;
 		end
@@ -125,7 +125,6 @@ function modAttack(rSource, rTarget, rRoll)
 		end
 		if EffectManager5E.hasEffectCondition(rSource, "Unconscious") then
 			bEffects = true;
-			bDIS = true; -- (from assumed prone state)
 		end
 
 		-- Get ability modifiers
@@ -134,7 +133,7 @@ function modAttack(rSource, rTarget, rRoll)
 			bEffects = true;
 			nAddMod = nAddMod + nBonusStat;
 		end
-
+		
 		-- Get exhaustion modifiers
 		local nExhaustMod, nExhaustCount = EffectManager5E.getEffectsBonus(rSource, {"EXHAUSTION"}, true);
 		if nExhaustCount > 0 then
@@ -143,7 +142,7 @@ function modAttack(rSource, rTarget, rRoll)
 				bDIS = true;
 			end
 		end
-
+		
 		-- Level Up
 		-- Get fatigue modifiers
 		local nFatigueMod, nFatigueCount = EffectManager5E.getEffectsBonus(rSource, {"FATIGUE"}, true);
@@ -227,13 +226,13 @@ function modAttack(rSource, rTarget, rRoll)
 		end
 
 	end
-
+	
 	if bSuperiorCover then
 		nAddMod = nAddMod - 5;
 	elseif bCover then
 		nAddMod = nAddMod - 2;
 	end
-
+	
 	local bDefADV, bDefDIS = ActorManager5E.getDefenseAdvantage(rSource, rTarget, aAttackFilter);
 	if bDefADV then
 		bADV = true;
@@ -241,7 +240,7 @@ function modAttack(rSource, rTarget, rRoll)
 	if bDefDIS then
 		bDIS = true;
 	end
-
+	
 	if #aAddDesc > 0 then
 		rRoll.sDesc = rRoll.sDesc .. " " .. table.concat(aAddDesc, " ");
 	end
@@ -254,6 +253,6 @@ function modAttack(rSource, rTarget, rRoll)
 		end
 	end
 	rRoll.nMod = rRoll.nMod + nAddMod;
-
+	
 	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
 end

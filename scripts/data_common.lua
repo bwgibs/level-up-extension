@@ -74,6 +74,8 @@ healthstatuswounded = "wounded";
 alignment_lawchaos = {
 	["lawful"] = 1,
 	["chaotic"] = 3,
+	["l"] = 1,
+	["c"] = 3,
 	["lg"] = 1,
 	["ln"] = 1,
 	["le"] = 1,
@@ -84,6 +86,8 @@ alignment_lawchaos = {
 alignment_goodevil = {
 	["good"] = 1,
 	["evil"] = 3,
+	["g"] = 1,
+	["e"] = 3,
 	["lg"] = 1,
 	["le"] = 3,
 	["ng"] = 1,
@@ -91,27 +95,29 @@ alignment_goodevil = {
 	["cg"] = 1,
 	["ce"] = 3,
 };
+alignment_neutral = "n";
 
 -- Values for size comparison
 creaturesize = {
-	["tiny"] = 1,
-	["small"] = 2,
-	["medium"] = 3,
-	["large"] = 4,
-	["huge"] = 5,
-	["gargantuan"] = 6,
-	["t"] = 1,
-	["s"] = 2,
-	["m"] = 3,
-	["l"] = 4,
-	["h"] = 5,
-	["g"] = 6,
+	["tiny"] = -2,
+	["small"] = -1,
+	["medium"] = 0,
+	["large"] = 1,
+	["huge"] = 2,
+	["gargantuan"] = 3,
+	["t"] = -2,
+	["s"] = -1,
+	["m"] = 0,
+	["l"] = 1,
+	["h"] = 2,
+	["g"] = 3,
 };
 
 -- Values for creature type comparison
 creaturedefaulttype = "humanoid";
 creaturehalftype = "half-";
 creaturehalftypesubrace = "human";
+-- NOTE: Multi-word types must come before single word types
 creaturetype = {
 	"aberration",
 	"beast",
@@ -128,7 +134,9 @@ creaturetype = {
 	"plant",
 	"undead",
 };
+-- NOTE: Multi-word types must come before single word types
 creaturesubtype = {
+	"living construct",
 	"aarakocra",
 	"bullywug",
 	"demon",
@@ -147,7 +155,6 @@ creaturesubtype = {
 	"kuo-toa",
 	"kobold",
 	"lizardfolk",
-	"living construct",
 	"merfolk",
 	"orc",
 	"quaggoth",
