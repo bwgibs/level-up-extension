@@ -17,8 +17,6 @@
 		</sizelimits>
 		<minimize>minimized_reference</minimize>
 		<tooltip field="name" />
-		<nodelete />
-		<playercontrol />
 		<sharable />
 		<script file="common/scripts/record_window.lua" />
 		<sheetdata>
@@ -41,39 +39,7 @@
 			<close_recordsheet />
 		</sheetdata>
 	</windowclass>
-	<windowclass name="ref_feat_header">
-		<margins control="0,0,0,2" />
-		<script>
-			function onInit()
-				update();
-			end
-			function update()
-				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
-				name.setReadOnly(bReadOnly);
 
-				local sType = DB.getValue(getDatabaseNode(), "type", "");
-				if sType ~= "" then
-					reftype.setValue(sType);
-				end
-			end
-		</script>
-		<sheetdata>
-			<link_record_header>
-				<class>reference_feat</class>
-			</link_record_header>
-
-			<anchor_record_header_right />
-			<icon_record_locked />
-			<button_record_locked />
-
-			<string_record_name name="name">
-				<empty textres="library_recordtype_empty_feat" />
-			</string_record_name>
-			<label_reftype name="reftype">
-				<static textres="ref_type_feat" />
-			</label_reftype>
-		</sheetdata>
-	</windowclass>
 	<windowclass name="feat_main">
 		<margins control="0,0,0,2" />
 		<script file="campaign/scripts/feat_main.lua" />

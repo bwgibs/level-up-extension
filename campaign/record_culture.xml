@@ -17,19 +17,7 @@
 		</sizelimits>
 		<minimize>minimized_reference</minimize>
 		<tooltip field="name" />
-		<script>
-			function onLockChanged()
-				if header.subwindow then
-					header.subwindow.update();
-				end
-				if stats.subwindow then
-					stats.subwindow.update();
-				end
-
-				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
-				text.setReadOnly(bReadOnly);
-			end
-		</script>
+		<script file="common/scripts/record_window.lua" />
 		<sheetdata>
 			<sub_record_header name="header">
 				<class>ref_culture_header</class>
@@ -41,7 +29,7 @@
 				<anchored to="contentframe" position="over" />
 				<invisible />
 			</ft_record>
-			<subwindow_record name="stats">
+			<subwindow_record name="content">
 				<class>ref_culture_stats</class>
 			</subwindow_record>
 
@@ -49,7 +37,7 @@
 				<target>text</target>
 			</scrollbar_record>
 			<scrollbar_record>
-				<target>stats</target>
+				<target>content</target>
 			</scrollbar_record>
 
 			<tabs_recordsheet name="tabs">
@@ -59,7 +47,7 @@
 				</tab>
 				<tab>
 					<icon>tab_other</icon>
-					<subwindow>stats</subwindow>
+					<subwindow>content</subwindow>
 				</tab>
 			</tabs_recordsheet>
 
@@ -67,34 +55,22 @@
 			<close_recordsheet />
 		</sheetdata>
 	</windowclass>
+
 	<windowclass name="ref_culture_header">
 		<margins control="0,0,0,2" />
-		<script>
-			function onInit()
-				update();
-			end
-			function update()
-				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
-				name.setReadOnly(bReadOnly);
-			end
-		</script>
+		<script file="common/scripts/record_header.lua" />
 		<sheetdata>
-			<link_record_header>
-				<class>reference_culture</class>
-			</link_record_header>
-
-			<anchor_record_header_right />
+			<link_record_header name="link" />
+			
+			<anchor_record_header_right name="rightanchor" />
 			<icon_record_locked />
 			<button_record_locked />
 
-			<string_record_name name="name">
-				<empty textres="library_recordtype_empty_culture" />
-			</string_record_name>
-			<label_reftype name="reftype">
-				<static textres="ref_type_culture" />
-			</label_reftype>
+			<string_record_name name="name" />
+			<label_recordtype name="recordtype_label" />
 		</sheetdata>
 	</windowclass>
+
 	<windowclass name="ref_culture_stats">
 		<margins control="0,0,0,7" />
 		<script>
@@ -154,16 +130,7 @@
 		</sizelimits>
 		<minimize>minimized_reference</minimize>
 		<tooltip field="name" />
-		<script>
-			function onLockChanged()
-				if header.subwindow then
-					header.subwindow.update();
-				end
-
-				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
-				text.setReadOnly(bReadOnly);
-			end
-		</script>
+		<script file="common/scripts/record_window.lua" />
 		<sheetdata>
 			<sub_record_header name="header">
 				<class>ref_culturaltrait_header</class>
@@ -185,15 +152,7 @@
 	</windowclass>
 	<windowclass name="ref_culturaltrait_header">
 		<margins control="0,0,0,2" />
-		<script>
-			function onInit()
-				update();
-			end
-			function update()
-				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
-				name.setReadOnly(bReadOnly);
-			end
-		</script>
+		<script file="common/scripts/record_header_simple.lua" />
 		<sheetdata>
 			<link_record_header>
 				<class>reference_culturaltrait</class>
@@ -206,9 +165,9 @@
 			<string_record_name name="name">
 				<empty textres="library_recordtype_empty_culturaltrait" />
 			</string_record_name>
-			<label_reftype name="reftype">
-				<static textres="ref_type_culturaltrait" />
-			</label_reftype>
+			<label_recordtype name="recordtype_label">
+				<static textres="library_recordtype_single_culturaltrait" />
+			</label_recordtype>
 		</sheetdata>
 	</windowclass>
 </root>

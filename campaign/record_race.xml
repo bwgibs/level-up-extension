@@ -88,12 +88,12 @@
 			</button_iadd>
 			<list_column name="cultures">
 				<datasource>.cultures</datasource>
-				<class>ref_culture</class>
+				<class>ref_race_culture</class>
 			</list_column>
 		</sheetdata>
 	</windowclass>
 
-	<windowclass name="ref_culture">
+	<windowclass name="ref_race_culture">
 		<margins control="0,0,0,2" />
 		<sheetdata>
 			<anchor_listitem_column_right name="rightanchor" />

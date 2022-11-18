@@ -78,6 +78,12 @@
 				<anchored to="hp" />
 			</string_column_npc_remainder>
 
+			<label_column name="damagethreshold_label">
+				<static textres="npc_label_damagethreshold" />
+				<tooltip textres="npc_tooltip_damagethreshold" />
+			</label_column>
+			<number_columnh name="damagethreshold" />
+
 			<label_column name="speed_label">
 				<static textres="npc_label_speed" />
 			</label_column>
