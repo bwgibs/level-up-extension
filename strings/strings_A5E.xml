@@ -80,23 +80,24 @@
 
 	<string name="ref_type_race">Heritage</string>
 	<string name="ref_type_racialtrait">Heritage Trait</string>
-	<string name="ref_type_culture">Culture</string>
 	<string name="ref_type_culturaltrait">Cultural Trait</string>
-	<string name="ref_type_destiny">Destiny</string>
-	<string name="ref_type_destinyfeature">Destiny Feature</string>
 
 	<!-- Library - Master Index -->
-	<string name="library_recordtype_label_culture">Cultures</string>
-	<string name="library_recordtype_label_destiny">Destinies</string>
 	<string name="library_recordtype_label_race">Heritages</string>
-
 	<string name="library_recordtype_empty_race">&#171; New Heritage &#187;</string>
 	<string name="library_recordtype_empty_racialtrait">&#171; New Heritage Trait &#187;</string>
-	<string name="library_recordtype_empty_heritagegift">&#171; New Heritage Gift &#187;</string>
-	<string name="library_recordtype_empty_paragongift">&#171; New Paragon Gift &#187;</string>
+
+	<string name="library_recordtype_label_culture">Cultures</string>
+	<string name="library_recordtype_label_destiny">Destinies</string>
+
+	<string name="library_recordtype_single_destiny">Destiny</string>
+
 	<string name="library_recordtype_empty_culture">&#171; New Culture &#187;</string>
-	<string name="library_recordtype_empty_culturaltrait">&#171; New Cultural Trait &#187;</string>
 	<string name="library_recordtype_empty_destiny">&#171; New Destiny &#187;</string>
-	<string name="library_recordtype_empty_inspirationfeature">&#171; New Inspiration Feature &#187;</string>
-	<string name="library_recordtype_empty_fulfillmentfeature">&#171; New Fulfillment Feature &#187;</string>
+
+	<string name="library_recordtype_single_culturaltrait">Cultural Trait</string>
+	<string name="library_recordtype_single_destinyfeature">Destiny Feature</string>
+
+	<string name="library_recordtype_empty_culturaltrait">&#171; New Cultural Trait &#187;</string>
+	<string name="library_recordtype_empty_destinyfeature">&#171; New Destiny Feature &#187;</string>
 </root>
