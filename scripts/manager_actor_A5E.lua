@@ -4,55 +4,7 @@
 --
 
 function onInit()
-	ActorHealthManager.getWoundPercent = getWoundPercent;
 	ActorManager5E.getDefenseValue = getDefenseValue;
-end
-
-function getWoundPercent(v)
-	local rActor = ActorManager.resolveActor(v);
-
-	local nHP = 0;
-	local nWounds = 0;
-	local nDeathSaveFail = 0;
-
-	local nodeCT = ActorManager.getCTNode(rActor);
-	if nodeCT then
-		nHP = math.max(DB.getValue(nodeCT, "hptotal", 0), 0);
-		nWounds = math.max(DB.getValue(nodeCT, "wounds", 0), 0);
-		nDeathSaveFail = DB.getValue(nodeCT, "deathsavefail", 0);
-	elseif ActorManager.isPC(rActor) then
-		local nodePC = ActorManager.getCreatureNode(rActor);
-		if nodePC then
-			nHP = math.max(DB.getValue(nodePC, "hp.total", 0), 0);
-			nWounds = math.max(DB.getValue(nodePC, "hp.wounds", 0), 0);
-			nDeathSaveFail = DB.getValue(nodePC, "hp.deathsavefail", 0);
-		end
-	end
-
-	local nPercentWounded = 0;
-	if nHP > 0 then
-		nPercentWounded = nWounds / nHP;
-	end
-
-	local sStatus;
-	if nPercentWounded >= 1 then
-		if nDeathSaveFail >= 3 then
-			sStatus = ActorHealthManager.STATUS_DEAD;
-		else
-			sStatus = ActorHealthManager.STATUS_DYING;
-		end
-	else
-		sStatus = ActorHealthManager.getDefaultStatusFromWoundPercent(nPercentWounded);
-	end
-
-	-- Level Up
-	if nPercentWounded >= 0.5 then
-		EffectManager.addCondition(rActor, "Bloodied");
-	elseif nPercentWounded < 0.5 then
-		EffectManager.removeCondition(rActor, "Bloodied");
-	end
-
-	return nPercentWounded, sStatus;
 end
 
 function getDefenseValue(rAttacker, rDefender, rRoll)
@@ -70,19 +22,25 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 	local nDefense = 10;
 	local sDefenseStat = "dexterity";
 
-	local nodeDefender = ActorManager.getCreatureNode(rDefender);
+	local sDefenderNodeType, nodeDefender = ActorManager.getTypeAndNode(rDefender);
 	if not nodeDefender then
 		return nil, 0, 0, false, false;
 	end
 
-	if ActorManager.isPC(rDefender) then
+	if sDefenderNodeType == "pc" then
 		nDefense = DB.getValue(nodeDefender, "defenses.ac.total", 10);
 		sDefenseStat = DB.getValue(nodeDefender, "ac.sources.ability", "");
 		if sDefenseStat == "" then
 			sDefenseStat = "dexterity";
 		end
+	elseif StringManager.contains({ "ct", "npc", "vehicle" }, sDefenderNodeType) then
+		if (rRoll.sSubtargetPath or "") ~= "" then
+			nDefense = DB.getValue(DB.getPath(rRoll.sSubtargetPath, "ac"), 10);
+		else
+			nDefense = DB.getValue(nodeDefender, "ac", 10);
+		end
 	else
-		nDefense = DB.getValue(nodeDefender, "ac", 10);
+		return nil, 0, 0, false, false;
 	end
 	nDefenseStatMod = ActorManager5E.getAbilityBonus(rDefender, sDefenseStat);
 	
@@ -111,7 +69,7 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 		end
 		
 		nBonusStat = ActorManager5E.getAbilityEffectsBonus(rDefender, sDefenseStat);
-		if ActorManager.isPC(rDefender) and (nBonusStat > 0) then
+		if (sDefenderNodeType == "pc") and (nBonusStat > 0) then
 			local sMaxDexBonus = DB.getValue(nodeDefender, "defenses.ac.dexbonus", "");
 			if sMaxDexBonus == "no" then
 				nBonusStat = 0;
@@ -161,6 +119,10 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 		end
 		if EffectManager.hasCondition(rDefender, "Unconscious") then
 			bADV = true;
+		end		
+		-- Level Up
+		if EffectManager5E.hasEffect(rDefender, "Slowed", rAttacker) then
+			nBonusSituational = nBonusSituational - 2;
 		end
 		
 		if bProne then
@@ -181,11 +143,6 @@ function getDefenseValue(rAttacker, rDefender, rRoll)
 					nBonusSituational = nBonusSituational + 2 - nCover;
 				end
 			end
-		end
-		
-		-- Level Up
-		if EffectManager5E.hasEffect(rDefender, "Slowed", rAttacker) then
-			nBonusSituational = nBonusSituational - 2;
 		end
 
 		nDefenseEffectMod = nBonusAC + nBonusStat + nBonusSituational;
