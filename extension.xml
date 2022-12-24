@@ -50,5 +50,6 @@
 		<script name="ActionCheckA5E" file="scripts/manager_action_check_A5E.lua" />
 		<script name="ActionSaveA5E" file="scripts/manager_action_save_A5E.lua" />
 		<script name="ActionSkillA5E" file="scripts/manager_action_skill_A5E.lua" />
+		<script name="ActionsManagerA5E" file="scripts/manager_actions_A5E.lua" />
 	</base>
 </root>
