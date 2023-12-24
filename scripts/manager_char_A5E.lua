@@ -10,7 +10,11 @@ FEAT_DIVINE_VISION = "divine vision";
 
 FEATURE_ABILITY_SCORE_INCREASES = "ability score increases";
 
+TRAIT_AASIMAR = "aasimar";
+TRAIT_FARM_LIFE = "farm life";
 TRAIT_CONSCRIPT = "conscript";
+TRAIT_CREATORS_BLESSING = "creator's blessing";
+TRAIT_MYSTIC_RAPPORT = "mystic rapport";
 TRAIT_SHARPENED_TOOLS = "sharpened tools";
 TRAIT_SLAPSTICK = "slapstick";
 TRAIT_UNDERGROUND_COMBAT_TRAINING = "underground combat training";
@@ -38,6 +42,7 @@ function onInit()
 	CharRaceManager.helperAddRaceMain = helperAddRaceMain;
 
 	CharRaceManager.helperAddRaceTraitMainDrop = helperAddRaceTraitMainDrop;
+	CharRaceManager.helperAddRaceTraitLanguagesDrop = helperAddRaceTraitLanguagesDrop;
 
 	_fnDefaultAddClassMain = CharClassManager.helperAddClassMain;
 	CharClassManager.helperAddClassMain = helperAddClassMain;
@@ -134,6 +139,19 @@ function onGiftSelect(aSelection, aGifts)
 	end
 end
 
+function onToolSelect(aSelection, aTools)
+	local nodeChar = aTools["nodeChar"];
+	local bWizard = aTools["bWizard"];
+	local sTool = aSelection[1];
+	if nodeChar and sTool then
+		for _,v in ipairs(aTools) do
+			if v == sTool then
+				CharManager.addProficiency(nodeChar, "tool", sTool);
+			end
+		end
+	end
+end
+
 -- CharManager.checkSkillProficiencies
 function checkSkillProficiencies(nodeChar, sText)
 	if _fnDefaultCheckSkillProficiencies(nodeChar, sText) then
@@ -150,7 +168,7 @@ function checkSkillProficiencies(nodeChar, sText)
 	-- Imperial - Learned Teachers - Level Up
 	sSkill, sPicks = sText:match("proficiency in ([%w%s]+) and (%w+) other skills? of your choice");
 	if sSkill and sPicks then
-		CharManager.addSkillDB(nodeChar, sSkill, 1);
+		CharManager.helperAddSkill(nodeChar, sSkill, 1);
 		
 		local nPicks = CharManager.convertSingleNumberTextToNumber(sPicks);
 		local aSkills = {};
@@ -387,7 +405,28 @@ function helperAddRaceTraitMainDrop(rAdd)
 			CharArmorManager.calcItemArmorClass(rAdd.nodeChar);
 		elseif sNameLower == CharManager.TRAIT_CATS_CLAWS then
 			CharRaceManager.applyLegacyCatsClawsClimb(rAdd.nodeChar, sText);
+
 		-- Level Up
+		-- Skills
+		elseif sNameLower == TRAIT_FARM_LIFE then
+			CharManager.helperAddSkill(rAdd.nodeChar, "Animal Handling", 1);
+		elseif sNameLower == TRAIT_MYSTIC_RAPPORT then
+			CharManager.helperAddSkill(rAdd.nodeChar, "Arcana", 1);
+		
+		-- Languages
+		elseif sNameLower == TRAIT_AASIMAR then
+			CharManager.addLanguage(rAdd.nodeChar, "Celestial");
+		
+		-- Proficiencies
+		elseif sNameLower == TRAIT_CREATORS_BLESSING then
+			local aTools = {"Brewer's Supplies", "Mason's Tools", "Smith's Tools"};
+			aTools["nodeChar"] = rAdd.nodeChar;
+			aTools["bWizard"] = rAdd.bWizard;
+			-- Display dialog to choose tool proficiency
+			local wSelect = Interface.openWindow("select_dialog", "");
+			local sTitle = Interface.getString("char_build_title_selecttools");
+			local sMessage = string.format(Interface.getString("char_build_message_selecttools"), rAdd.sSourceName);
+			wSelect.requestSelection(sTitle, sMessage, aTools, onToolSelect, aTools);
 		elseif sNameLower == TRAIT_SLAPSTICK or sNameLower == TRAIT_SHARPENED_TOOLS then
 			CharManager.addProficiency(rAdd.nodeChar, "weapons", "Improvised");
 		elseif sNameLower == TRAIT_CONSCRIPT then
@@ -430,7 +469,41 @@ function helperAddRaceTraitMainDrop(rAdd)
 		CharManager.helperCheckActionsAdd(rAdd.nodeChar, rAdd.nodeSource, rAdd.sSourceType, "Race Actions/Effects");
 	end
 end
+--CharRaceManager.helperAddRaceTraitLanguagesDrop
+function helperAddRaceTraitLanguagesDrop(rAdd)
+	local sText = DB.getText(rAdd.nodeSource, "text", "");
+	local sLanguages = sText:match("You can speak, read, and write ([^.]+)");
+	if not sLanguages then
+		sLanguages = sText:match("You can read and write ([^.]+)");
+	end
+	if not sLanguages then
+		sLanguages = sText:match("You can speak, read, write, and sign ([^.]+)");
+	end
+	if not sLanguages then
+		sLanguages = sText:match("You can speak, read, sign, and write ([^.]+)");
+	end
+	if not sLanguages then
+		return;
+	end
 
+	sLanguages = sLanguages:gsub(" and ", ",");
+	sLanguages = sLanguages:gsub("one extra language of your choice", "Choice");
+	sLanguages = sLanguages:gsub("one other language of your choice", "Choice");
+	-- EXCEPTION - Kenku - Languages - Volo
+	sLanguages = sLanguages:gsub(", but you.*$", "");
+	
+	-- Level Up
+	sLanguages = sLanguages:gsub(", ", ",");
+	sLanguages = sLanguages:gsub(",,", ",");
+	sLanguages = sLanguages:gsub("in ", "");
+	sLanguages = sLanguages:gsub("one other language", "Choice");
+	sLanguages = sLanguages:gsub("two additional languages", "Choice,Choice");
+	sLanguages = sLanguages:gsub("three additional languages", "Choice,Choice,Choice");
+	
+	for s in sLanguages:gmatch("([^,]+)") do 
+		CharManager.addLanguage(rAdd.nodeChar, s);
+	end
+end
 -- CharClassManager.helperAddClassMain
 function helperAddClassMain(rAdd)
 	_fnDefaultAddClassMain(rAdd);

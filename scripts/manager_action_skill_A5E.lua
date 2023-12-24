@@ -15,7 +15,7 @@ function performNPCRoll(draginfo, rActor, sSkill, nSkill, aSkill)
 	rRoll.sType = "skill";
 	rRoll.aDice = { "d20" };
 
-	rRoll.sDesc = "[SKILL] " .. sSkill;
+	rRoll.sDesc = "[SKILL] " .. StringManager.capitalizeAll(sSkill);
 	rRoll.nMod = nSkill;
 
 	--Level Up
