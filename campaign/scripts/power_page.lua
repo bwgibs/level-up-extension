@@ -10,7 +10,7 @@ local bCheckingUsage = false;
 local bUpdatingGroups = false;
 
 function onInit()
-	updatePowerGroups();
+	self.updatePowerGroups();
 
 	local node = getDatabaseNode();
 
@@ -94,21 +94,23 @@ end
 function onAbilityChanged()
 	for _,v in pairs(powers.getWindows()) do
 		if v.getClass() ~= "power_group_header" then
-			if v.header.subwindow then
+			if v.header.subwindow and v.header.subwindow.actionsmini then
 				for _,v2 in pairs(v.header.subwindow.actionsmini.getWindows()) do
-					v2.updateViews();
+					v2.onDataChanged();
 				end
 			end
-			for _,v2 in pairs(v.actions.getWindows()) do
-				v2.updateViews();
+			if v.actions then
+				for _,v2 in pairs(v.actions.getWindows()) do
+					v2.onDataChanged();
+				end
 			end
 		end
 	end
 end
 
 function onModeChanged()
-	rebuildGroups();
-	updateUses();
+	self.rebuildGroups();
+	self.updateUses();
 end
 
 function onDisplayChanged()
@@ -120,16 +122,16 @@ function onDisplayChanged()
 end
 
 function onUsesChanged()
-	rebuildGroups();
-	updateUses();
+	self.rebuildGroups();
+	self.updateUses();
 end
 
 function onGroupListChanged()
-	updatePowerGroups();
+	self.updatePowerGroups();
 end
 
 function onGroupTypeChanged()
-	updatePowerGroups();
+	self.updatePowerGroups();
 end
 
 function onGroupNameChanged(nodeGroupName)
@@ -138,8 +140,8 @@ function onGroupNameChanged(nodeGroupName)
 	end
 	bUpdatingGroups = true;
 
-	local nodeParent = nodeGroupName.getParent();
-	local sNode = nodeParent.getPath();
+	local nodeParent = DB.getParent(nodeGroupName);
+	local sNode = DB.getPath(nodeParent);
 
 	local nodeGroup = nil;
 	local sOldValue = "";
@@ -164,22 +166,23 @@ function onGroupNameChanged(nodeGroupName)
 
 	bUpdatingGroups = false;
 
-	updatePowerGroups();
+	self.updatePowerGroups();
 end
 
 function onPowerListChanged()
-	updatePowerGroups();
-	updateDisplay();
+	self.updatePowerGroups();
 end
 
 function onPowerGroupChanged(node)
-	updatePowerGroups();
+	self.updatePowerGroups();
 end
 
 function addPower(bFocus)
 	local w = powers.createWindow();
 	if bFocus then
-		w.name.setFocus();
+		if w.header and w.header.subwindow and w.header.subwindow.name then
+			w.header.subwindow.name.setFocus();
+		end
 	end
 	return w;
 end
@@ -188,19 +191,10 @@ function addGroupPower(sGroup, nLevel)
 	local w = powers.createWindow();
 	w.level.setValue(nLevel);
 	w.group.setValue(sGroup);
-	w.name.setFocus();
-	return w;
-end
-
-function updateDisplay()
-	if parentcontrol.window.parentcontrol.window.actions_iedit then
-		local bEditMode = (parentcontrol.window.parentcontrol.window.actions_iedit.getValue() == 1);
-		for _,w in ipairs(powers.getWindows()) do
-			if w.getClass() ~= "power_group_header" then
-				w.idelete.setVisibility(bEditMode);
-			end
-		end
+	if w.header and w.header.subwindow and w.header.subwindow.name then
+		w.header.subwindow.name.setFocus();
 	end
+	return w;
 end
 
 function updatePowerGroups()
@@ -209,11 +203,11 @@ function updatePowerGroups()
 	end
 	bUpdatingGroups = true;
 
-	rebuildGroups();
+	self.rebuildGroups();
 
 	-- Determine all the groups accounted for by current powers
 	local aPowerGroups = {};
-	for _,nodePower in pairs(DB.getChildren(getDatabaseNode(), "powers")) do
+	for _,nodePower in ipairs(DB.getChildList(getDatabaseNode(), "powers")) do
 		local sGroup = DB.getValue(nodePower, "group", "");
 		if sGroup ~= "" then
 			aPowerGroups[sGroup] = true;
@@ -232,7 +226,7 @@ function updatePowerGroups()
 	for k,_ in pairs(aPowerGroups) do
 		if not aGroups[k] then
 			local nodeGroups = DB.createChild(getDatabaseNode(), "powergroup");
-			local nodeNewGroup = nodeGroups.createChild();
+			local nodeNewGroup = DB.createChild(nodeGroups);
 			DB.setValue(nodeNewGroup, "name", "string", k);
 			if sLowerSpellsLabel == k:lower() then
 				DB.setValue(nodeNewGroup, "castertype", "string", "memorization");
@@ -240,12 +234,12 @@ function updatePowerGroups()
 		end
 	end
 
-	rebuildGroups();
+	self.rebuildGroups();
 
 	bUpdatingGroups = false;
 
-	updateHeaders();
-	updateUses();
+	self.updateHeaders();
+	self.updateUses();
 end
 
 function updateHeaders()
@@ -264,8 +258,8 @@ function updateHeaders()
 	-- Create new category headings
 	local aCategoryWindows = {};
 	local aGroupShown = {};
-	for _,nodePower in pairs(DB.getChildren(getDatabaseNode(), "powers")) do
-		local sCategory, sGroup, nLevel = getWindowSortByNode(nodePower);
+	for _,nodePower in ipairs(DB.getChildList(getDatabaseNode(), "powers")) do
+		local sCategory, sGroup, nLevel = self.getWindowSortByNode(nodePower);
 
 		if not aCategoryWindows[sCategory] then
 			local wh = powers.createWindowWithClass("power_group_header");
@@ -293,15 +287,7 @@ function updateHeaders()
 end
 
 function onPowerWindowAdded(w)
-	updatePowerWindowDisplay(w);
-	updatePowerWindowUses(getDatabaseNode(), w);
-end
-
-function updatePowerWindowDisplay(w)
-	if parentcontrol.window.parentcontrol.window.actions_iedit then
-		local bEditMode = (parentcontrol.window.parentcontrol.window.actions_iedit.getValue() == 1);
-		w.idelete.setVisibility(bEditMode);
-	end
+	self.updatePowerWindowUses(getDatabaseNode(), w);
 end
 
 function updatePowerWindowUses(nodeChar, w)
@@ -311,9 +297,11 @@ function updatePowerWindowUses(nodeChar, w)
 	-- Get power information
 	local sGroup = w.group.getValue();
 	local nLevel = w.level.getValue();
-	local nCast = w.cast.getValue();
-	local nPrepared = w.prepared.getValue();
-	local sUsesPeriod = w.usesperiod.getValue();
+
+	local nodePower = w.getDatabaseNode();
+	local nCast = DB.getValue(nodePower, "cast", 0);
+	local nPrepared = DB.getValue(nodePower, "prepared", 0);
+	local sUsesPeriod = DB.getValue(nodePower, "usesperiod", "");
 
 	-- Get the power group, and whether it's a caster group
 	local rGroup = aGroups[sGroup];
@@ -375,9 +363,7 @@ function updatePowerWindowUses(nodeChar, w)
 			else
 				bShow = true;
 			end
-		elseif sMode == "preparation" then
-			bShow = true;
-		else
+		else -- "preparation" or "" (standard) mode
 			bShow = true;
 		end
 
@@ -474,7 +460,7 @@ function updateUses()
 	local sMode = DB.getValue(nodeChar, "powermode", "");
 
 	-- Add power counts, total cast and total prepared per group/slot
-	for _,v in pairs(DB.getChildren(nodeChar, "powers")) do
+	for _,v in ipairs(DB.getChildList(nodeChar, "powers")) do
 		local sGroup = DB.getValue(v, "group", "");
 		local rGroup = aGroups[sGroup];
 		if rGroup then
@@ -502,7 +488,7 @@ function updateUses()
 	-- Show/hide powers based on findings
 	for _,v in pairs(powers.getWindows()) do
 		if v.getClass() ~= "power_group_header" then
-			if updatePowerWindowUses(nodeChar, v) then
+			if self.updatePowerWindowUses(nodeChar, v) then
 				local sGroup = v.group.getValue();
 				local rGroup = aGroups[sGroup];
 				local bCaster = (rGroup and rGroup.grouptype ~= "");
@@ -564,7 +550,7 @@ function onDrop(x, y, draginfo)
 				end
 				PowerManager.addPower(sClass, draginfo.getDatabaseNode(), getDatabaseNode(), sGroup);
 				bUpdatingGroups = false;
-				onPowerGroupChanged();
+				self.onPowerGroupChanged();
 			else
 				ChatManager.SystemMessage(Interface.getString("module_message_missinglink_wildcard"));
 			end
@@ -574,28 +560,28 @@ function onDrop(x, y, draginfo)
 			bUpdatingGroups = true;
 			PowerManager.addPower(sClass, draginfo.getDatabaseNode(), getDatabaseNode());
 			bUpdatingGroups = false;
-			onPowerGroupChanged();
+			self.onPowerGroupChanged();
 			return true;
 		end
 		if sClass == "reference_racialtrait" then
 			bUpdatingGroups = true;
 			PowerManager.addPower(sClass, draginfo.getDatabaseNode(), getDatabaseNode());
 			bUpdatingGroups = false;
-			onPowerGroupChanged();
+			self.onPowerGroupChanged();
 			return true;
 		end
 		if sClass == "reference_feat" then
 			bUpdatingGroups = true;
 			PowerManager.addPower(sClass, draginfo.getDatabaseNode(), getDatabaseNode());
 			bUpdatingGroups = false;
-			onPowerGroupChanged();
+			self.onPowerGroupChanged();
 			return true;
 		end
 		if sClass == "ref_ability" then
 			bUpdatingGroups = true;
 			PowerManager.addPower(sClass, draginfo.getDatabaseNode(), getDatabaseNode());
 			bUpdatingGroups = false;
-			onPowerGroupChanged();
+			self.onPowerGroupChanged();
 			return true;
 		end
 	end
@@ -611,11 +597,11 @@ function rebuildGroups()
 
 	local nodeChar = getDatabaseNode();
 
-	for _,v in pairs(DB.getChildren(nodeChar, "powergroup")) do
+	for _,v in ipairs(DB.getChildList(nodeChar, "powergroup")) do
 		local sGroup = DB.getValue(v, "name", "");
 		local rGroup = {};
 		rGroup.node = v;
-		rGroup.nodename = v.getPath();
+		rGroup.nodename = DB.getPath(v);
 		if sGroup == "" then
 			rGroup.grouptype = "";
 		else
@@ -644,7 +630,7 @@ function getWindowSortByNode(node)
 	local sGroup = DB.getValue(node, "group", "");
 	local nLevel = DB.getValue(node, "level", 0);
 
-	sCategory = sGroup;
+	local sCategory = sGroup;
 	if aGroups[sGroup] and aGroups[sGroup].grouptype ~= "" then
 		sCategory = sCategory .. nLevel;
 	else
@@ -658,23 +644,21 @@ function getWindowSort(w)
 	local sGroup = w.group.getValue();
 	local nLevel = w.level.getValue();
 
-	sCategory = sGroup;
+	local sCategory = sGroup;
 	if aGroups[sGroup] and aGroups[sGroup].grouptype ~= "" then
 		sCategory = sCategory .. nLevel;
-	else
-		nLevel = 0;
 	end
 
-	return sCategory, sGroup, nLevel;
+	return sCategory;
 end
 
 function onSortCompare(w1, w2)
-	local vCategory1 = getWindowSort(w1);
-	local vCategory2 = getWindowSort(w2);
+	local vCategory1 = self.getWindowSort(w1);
+	local vCategory2 = self.getWindowSort(w2);
 	if vCategory1 ~= vCategory2 then
 		return vCategory1 > vCategory2;
 	end
-
+	
 	local bIsHeader1 = (w1.getClass() == "power_group_header");
 	local bIsHeader2 = (w2.getClass() == "power_group_header");
 	if bIsHeader1 then
@@ -682,9 +666,9 @@ function onSortCompare(w1, w2)
 	elseif bIsHeader2 then
 		return true;
 	end
-
-	local sValue1 = string.lower(w1.name.getValue());
-	local sValue2 = string.lower(w2.name.getValue());
+	
+	local sValue1 = DB.getValue(w1.getDatabaseNode(), "name", ""):lower();
+	local sValue2 = DB.getValue(w2.getDatabaseNode(), "name", ""):lower();
 	if sValue1 ~= sValue2 then
 		return sValue1 > sValue2;
 	end
