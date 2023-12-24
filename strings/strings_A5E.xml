@@ -24,6 +24,8 @@
 	<string name="char_label_race">HERITAGE</string>
 	<string name="char_build_title_selectgifts">Select Gift</string>
 	<string name="char_build_message_selectgifts">Choose %s gift from the list below.</string>
+	<string name="char_build_title_selecttools">Select Tool</string>
+	<string name="char_build_message_selecttools">Choose %s tool proficiency from the list below.</string>
 
 	<!-- Character - Abilities -->
 	<string name="char_abilities_message_raceadd">Heritage '%s' added to '%s'.</string>
