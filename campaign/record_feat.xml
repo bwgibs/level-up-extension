@@ -6,41 +6,8 @@
 -->
 
 <root>
-	<windowclass name="reference_feat">
-		<frame>recordsheet</frame>
-		<placement>
-			<size width="350" height="350" />
-		</placement>
-		<sizelimits>
-			<minimum width="300" height="300" />
-			<dynamic />
-		</sizelimits>
-		<minimize>minimized_reference</minimize>
-		<tooltip field="name" />
-		<sharable />
-		<script file="common/scripts/record_window.lua" />
-		<sheetdata>
-			<sub_record_header name="header">
-				<class>ref_feat_header</class>
-			</sub_record_header>
-
-			<frame_record_content />
-
-			<subwindow_record name="main">
-				<class>feat_main</class>
-				<activate />
-			</subwindow_record>
-
-			<scrollbar_record>
-				<target>main</target>
-			</scrollbar_record>
-
-			<resize_recordsheet />
-			<close_recordsheet />
-		</sheetdata>
-	</windowclass>
-
-	<windowclass name="feat_main">
+	<windowclass name="reference_feat" copy="record_window" />
+	<windowclass name="reference_feat_main">
 		<margins control="0,0,0,2" />
 		<script file="campaign/scripts/feat_main.lua" />
 		<sheetdata>

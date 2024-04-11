@@ -6,77 +6,24 @@
 -->
 
 <root>
-	<windowclass name="reference_culture">
-		<frame>recordsheet</frame>
-		<placement>
-			<size width="350" height="350" />
-		</placement>
-		<sizelimits>
-			<minimum width="300" height="300" />
-			<dynamic />
-		</sizelimits>
-		<minimize>minimized_reference</minimize>
-		<tooltip field="name" />
-		<script file="common/scripts/record_window.lua" />
-		<sheetdata>
-			<sub_record_header name="header">
-				<class>ref_culture_header</class>
-			</sub_record_header>
-
-			<frame_record_content_tabbed name="contentframe" />
-
-			<ft_record name="text">
-				<anchored to="contentframe" position="over" />
-				<invisible />
-			</ft_record>
-			<subwindow_record name="content">
-				<class>ref_culture_stats</class>
-			</subwindow_record>
-
-			<scrollbar_record>
-				<target>text</target>
-			</scrollbar_record>
-			<scrollbar_record>
-				<target>content</target>
-			</scrollbar_record>
-
-			<tabs_recordsheet name="tabs">
-				<tab>
-					<icon>tab_main</icon>
-					<subwindow>text</subwindow>
-				</tab>
-				<tab>
-					<icon>tab_other</icon>
-					<subwindow>content</subwindow>
-				</tab>
-			</tabs_recordsheet>
-
-			<resize_recordsheet />
-			<close_recordsheet />
-		</sheetdata>
+	<windowclass name="reference_culture" copy="record_window_tabbed">
+		<tab>
+			<name>notes</name>
+			<resource>tab_main</resource>
+			<class>record_content_text</class>
+			<embed />
+		</tab>
+		<tab merge="add">
+			<name>main</name>
+			<resource>tab_other</resource>
+			<class>reference_culture_stats</class>
+			<embed />
+		</tab>
 	</windowclass>
 
-	<windowclass name="ref_culture_header">
-		<margins control="0,0,0,2" />
-		<script file="common/scripts/record_header.lua" />
-		<sheetdata>
-			<link_record_header name="link" />
-			
-			<anchor_record_header_right name="rightanchor" />
-			<icon_record_locked />
-			<button_record_locked />
-
-			<string_record_name name="name" />
-			<label_recordtype name="recordtype_label" />
-		</sheetdata>
-	</windowclass>
-
-	<windowclass name="ref_culture_stats">
+	<windowclass name="reference_culture_stats">
 		<margins control="0,0,0,7" />
 		<script>
-			function onInit()
-				update();
-			end
 			function update()
 				local bReadOnly = WindowManager.getReadOnlyState(getDatabaseNode());
 				traits.update(bReadOnly);
@@ -103,7 +50,6 @@
 			</list_column>
 		</sheetdata>
 	</windowclass>
-
 	<windowclass name="ref_cultural_trait">
 		<margins control="0,0,0,2" />
 		<sheetdata>
@@ -119,55 +65,8 @@
 		</sheetdata>
 	</windowclass>
 
-	<windowclass name="reference_culturaltrait">
-		<frame>recordsheet</frame>
-		<placement>
-			<size width="350" height="350" />
-		</placement>
-		<sizelimits>
-			<minimum width="300" height="300" />
-			<dynamic />
-		</sizelimits>
-		<minimize>minimized_reference</minimize>
-		<tooltip field="name" />
-		<script file="common/scripts/record_window.lua" />
-		<sheetdata>
-			<sub_record_header name="header">
-				<class>ref_culturaltrait_header</class>
-			</sub_record_header>
-
-			<frame_record_content />
-			<ft_record name="text">
-				<anchored to="contentframe" position="over" />
-				<footer>footer_wide</footer>
-			</ft_record>
-			<scrollbar>
-				<anchored to="text" />
-				<target>text</target>
-			</scrollbar>
-
-			<resize_recordsheet />
-			<close_recordsheet />
-		</sheetdata>
-	</windowclass>
-	<windowclass name="ref_culturaltrait_header">
-		<margins control="0,0,0,2" />
-		<script file="common/scripts/record_header_simple.lua" />
-		<sheetdata>
-			<link_record_header>
-				<class>reference_culturaltrait</class>
-			</link_record_header>
-
-			<anchor_record_header_right />
-			<icon_record_locked />
-			<button_record_locked />
-
-			<string_record_name name="name">
-				<empty textres="library_recordtype_empty_culturaltrait" />
-			</string_record_name>
-			<label_recordtype name="recordtype_label">
-				<static textres="library_recordtype_single_culturaltrait" />
-			</label_recordtype>
-		</sheetdata>
+	<windowclass name="reference_culturaltrait" copy="record_window_text" />
+	<windowclass name="reference_culturaltrait_header" copy="record_header">
+		<name_emptyres>library_recordtype_empty_culturaltrait</name_emptyres>
 	</windowclass>
 </root>

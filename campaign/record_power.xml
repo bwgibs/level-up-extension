@@ -191,7 +191,7 @@
 		</placement>
 	</windowclass>
 
-	<windowclass name="power_stats" merge="join">
+	<windowclass name="power_main" merge="join">
 		<sheetdata>
 			<label_column name="rare_label">
 				<static textres="ref_label_rare" />
