@@ -5,7 +5,6 @@
 
 function onInit()
 	onSummaryChanged();
-	update();
 end
 
 function onSummaryChanged()
