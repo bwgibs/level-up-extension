@@ -3,12 +3,11 @@
 -- attribution and copyright information.
 --
 
+local modSaveOriginal;
+
 function onInit()
-	ActionsManager.unregisterModHandler("save");
-	ActionsManager.unregisterModHandler("death");
-	ActionsManager.unregisterModHandler("death_auto");
-	ActionsManager.unregisterModHandler("concentration");
-	ActionsManager.unregisterModHandler("systemshock");
+	modSaveOriginal = ActionSave.modSave;
+	ActionSave.modSave = modSave;
 
 	ActionsManager.registerModHandler("save", modSave);
 	ActionsManager.registerModHandler("death", modSave);
@@ -18,9 +17,12 @@ function onInit()
 end
 
 function modSave(rSource, rTarget, rRoll)
-	local bAutoFail = false;
+	modSaveOriginal(rSource, rTarget, rRoll);
+	local bADV, bDIS = ActionsManagerA5E.clearAdvantage(rRoll);
 
-	local sSave = nil;
+	local bAutoFail = false;
+	local nAddMod = 0;
+	local sSave;
 	if rRoll.sDesc:match("%[DEATH%]") then
 		sSave = "death";
 	elseif rRoll.sDesc:match("%[CONCENTRATION%]") then
@@ -34,127 +36,16 @@ function modSave(rSource, rTarget, rRoll)
 		end
 	end
 
-	local bADV = false;
-	local bDIS = false;
-	if rRoll.sDesc:match(" %[ADV%]") then
-		bADV = true;
-		rRoll.sDesc = rRoll.sDesc:gsub(" %[ADV%]", "");
-	end
-	if rRoll.sDesc:match(" %[DIS%]") then
-		bDIS = true;
-		rRoll.sDesc = rRoll.sDesc:gsub(" %[DIS%]", "");
-	end
-
-	local aAddDesc = {};
-	local aAddDice = {};
-	local nAddMod = 0;
-	
-	local nCover = 0;
-	if sSave == "dexterity" then
-		if rRoll.sSaveDesc then
-			nCover = tonumber(rRoll.sSaveDesc:match("%[COVER %-(%d)%]")) or 0;
-		else
-			if ModifierManager.getKey("DEF_SCOVER") then
-				nCover = 5;
-			elseif ModifierManager.getKey("DEF_COVER") then
-				nCover = 2;
-			end
-		end
-	end
-	
 	if rSource then
 		local bEffects = false;
-
-		-- Build filter
-		local aSaveFilter = {};
-		if sSave then
-			table.insert(aSaveFilter, sSave);
-		end
-
-		-- Get effect modifiers
-		local rSaveSource = nil;
-		if rRoll.sSource then
-			rSaveSource = ActorManager.resolveActor(rRoll.sSource);
-		end
-		local aAddDice, nAddMod, nEffectCount = EffectManager5E.getEffectsBonus(rSource, {"SAVE"}, false, aSaveFilter, rSaveSource);
-		if nEffectCount > 0 then
-			bEffects = true;
-		end
-		
-		-- Get condition modifiers
-		if EffectManager5E.hasEffect(rSource, "ADVSAV", rTarget) then
-			bADV = true;
-			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "ADVSAV", aSaveFilter, rTarget)) > 0 then
-			bADV = true;
-			bEffects = true;
-		elseif sSave == "death" and EffectManager5E.hasEffect(rSource, "ADVDEATH") then
-			bADV = true;
-			bEffects = true;
-		end
-		if EffectManager5E.hasEffect(rSource, "DISSAV", rTarget) then
-			bDIS = true;
-			bEffects = true;
-		elseif #(EffectManager5E.getEffectsByType(rSource, "DISSAV", aSaveFilter, rTarget)) > 0 then
-			bDIS = true;
-			bEffects = true;
-		elseif sSave == "death" and EffectManager5E.hasEffect(rSource, "DISDEATH") then
-			bDIS = true;
-			bEffects = true;
-		end
 		if sSave == "dexterity" then
-			if EffectManager5E.hasEffectCondition(rSource, "Restrained") then
-				bDIS = true;
-				bEffects = true;
-			end
-			if nCover < 5 then
-				if EffectManager5E.hasEffect(rSource, "SCOVER", rTarget) then
-					nCover = 5;
-					bEffects = true;
-				elseif nCover < 2 then
-					if EffectManager5E.hasEffect(rSource, "COVER", rTarget) then
-						nCover = 2;
-						bEffects = true;
-					end
-				end
-			end
 			-- Level Up
 			if EffectManager5E.hasEffectCondition(rSource, "Slowed") then
 				nAddMod = nAddMod - 2;
 				bEffects = true;
 			end
 		end
-		if StringManager.contains({ "strength", "dexterity" }, sSave) then
-			if EffectManager5E.hasEffectCondition(rSource, "Paralyzed") then
-				bAutoFail = true;
-				bEffects = true;
-			end
-			if EffectManager5E.hasEffectCondition(rSource, "Stunned") then
-				bAutoFail = true;
-				bEffects = true;
-			end
-			if EffectManager5E.hasEffectCondition(rSource, "Unconscious") then
-				bAutoFail = true;
-				bEffects = true;
-			end
-		end
-		if StringManager.contains({ "strength", "dexterity", "constitution", "concentration", "systemshock" }, sSave) then
-			if EffectManager5E.hasEffectCondition(rSource, "Encumbered") then
-				bEffects = true;
-				bDIS = true;
-			end
-		end
-		if sSave == "dexterity" and EffectManager5E.hasEffectCondition(rSource, "Dodge") and 
-				not (EffectManager5E.hasEffectCondition(rSource, "Paralyzed") or
-				EffectManager5E.hasEffectCondition(rSource, "Stunned") or
-				EffectManager5E.hasEffectCondition(rSource, "Unconscious") or
-				EffectManager5E.hasEffectCondition(rSource, "Incapacitated") or
-				EffectManager5E.hasEffectCondition(rSource, "Grappled") or
-				EffectManager5E.hasEffectCondition(rSource, "Restrained")) then
-			bEffects = true;
-			bADV = true;
-		end
-		-- Level Up
+
 		if StringManager.contains({ "strength", "dexterity", "constitution" }, sSave) then
 			-- Get fatigue modifiers
 			local nFatigueMod, nFatigueCount = EffectManager5E.getEffectsBonus(rSource, {"FATIGUE"}, true);
@@ -178,55 +69,7 @@ function modSave(rSource, rTarget, rRoll)
 				end
 			end
 		end
-		if rRoll.sSaveDesc then
-			if rRoll.sSaveDesc:match("%[MAGIC%]") then
-				local bMagicResistance = false;
-				if EffectManager5E.hasEffectCondition(rSource, "Magic Resistance") then
-					bMagicResistance = true;
-				elseif StringManager.contains({ "intelligence", "wisdom", "charisma" }, sSave) then
-					if EffectManager5E.hasEffectCondition(rSource, "Gnome Cunning") then
-						bMagicResistance = true;
-					else
-						local sSourceNodeType, nodeSource = ActorManager.getTypeAndNode(rSource);
-						if nodeSource and (sSourceNodeType == "pc") then
-							if CharManager.hasTrait(nodeSource, CharManager.TRAIT_GNOME_CUNNING) then
-								bMagicResistance = true;
-							end
-						end
-					end
-				end
-				if bMagicResistance then
-					bEffects = true;
-					bADV = true;
-				end
-			end
-		end
 
-		-- Get ability modifiers
-		local sSaveAbility = nil;
-		if sSave == "concentration" or sSave == "systemshock" then
-			sSaveAbility = "constitution";
-		elseif sSave ~= "death" then
-			sSaveAbility = sSave;
-		end
-		if sSaveAbility then
-			local nBonusStat, nBonusEffects = ActorManager5E.getAbilityEffectsBonus(rSource, sSaveAbility);
-			if nBonusEffects > 0 then
-				bEffects = true;
-				nAddMod = nAddMod + nBonusStat;
-			end
-		end
-		
-		-- Get exhaustion modifiers
-		local nExhaustMod, nExhaustCount = EffectManager5E.getEffectsBonus(rSource, {"EXHAUSTION"}, true);
-		if nExhaustCount > 0 then
-			bEffects = true;
-			if nExhaustMod >= 3 then
-				bDIS = true;
-			end
-		end
-
-		-- Level Up
 		-- Check for expertise die
 		if not EffectManager5E.hasEffectCondition(rSource, "Rattled") then
 			local bExpertiseD4 = ModifierManager.getKey("EXP_D4");
@@ -257,55 +100,14 @@ function modSave(rSource, rTarget, rRoll)
 			end
 		end
 
-		-- Handle War Caster feat
-		if sSave == "concentration" and ActorManager.isPC(rSource) and CharManager.hasFeat(ActorManager.getCreatureNode(rSource), CharManager.FEAT_WAR_CASTER) then
-			bADV = true;
-			rRoll.sDesc = rRoll.sDesc .. " [" .. CharManager.FEAT_WAR_CASTER:upper() .. "]";
-		end
-		
-		-- If effects apply, then add note
-		if bEffects then
-			for _, vDie in ipairs(aAddDice) do
-				if vDie:sub(1,1) == "-" then
-					table.insert(rRoll.aDice, "-p" .. vDie:sub(3));
-				else
-					table.insert(rRoll.aDice, "p" .. vDie:sub(2));
-				end
-			end
-			rRoll.nMod = rRoll.nMod + nAddMod;
-			
-			local sEffects = "";
-			local sMod = StringManager.convertDiceToString(aAddDice, nAddMod, true);
-			if sMod ~= "" then
-				sEffects = "[" .. Interface.getString("effects_tag") .. " " .. sMod .. "]";
-			else
-				sEffects = "[" .. Interface.getString("effects_tag") .. "]";
-			end
-			rRoll.sDesc = rRoll.sDesc .. " " .. sEffects;
-		end
-	end
-	
-	if rRoll.sSaveDesc then
-		local sEffectsTag = Interface.getString("effects_tag");
-		local sDCEffect = rRoll.sSaveDesc:match("%[" .. sEffectsTag .. " ([+-]?%d+)%]")
-		if sDCEffect then
-			local sDC = string.format(" [DC %s %s]", sEffectsTag, sDCEffect);
-			rRoll.sDesc = rRoll.sDesc .. sDC;
-		elseif rRoll.sSaveDesc:match("%[" .. sEffectsTag .. "%]") then
-			local sDC = string.format(" [DC %s]", sEffectsTag);
-			rRoll.sDesc = rRoll.sDesc .. sDC;
-		end
+		ActionsManagerA5E.addEffectsTag(rRoll, bEffects, {}, nAddMod);
 	end
 
-	if nCover > 0 then
-		rRoll.nMod = rRoll.nMod + nCover;
-		rRoll.sDesc = rRoll.sDesc .. string.format(" [COVER +%d]", nCover);
-	end
-	
-	ActionsManager2.encodeDesktopMods(rRoll);
 	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
-	
+
 	if bAutoFail then
-		rRoll.sDesc = rRoll.sDesc .. " [AUTOFAIL]";
+		if not rRoll.sDesc:match("%[AUTOFAIL%]") then
+			rRoll.sDesc = rRoll.sDesc .. " [AUTOFAIL]";
+		end
 	end
 end
