@@ -4,6 +4,7 @@
 --
 
 function onInit()
+	ActionSave.modSave = modSave;
 	ActionsManager.unregisterModHandler("save");
 	ActionsManager.unregisterModHandler("death");
 	ActionsManager.unregisterModHandler("death_auto");
@@ -48,7 +49,7 @@ function modSave(rSource, rTarget, rRoll)
 	local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
-	
+
 	local nCover = 0;
 	if sSave == "dexterity" then
 		if rRoll.sSaveDesc then
@@ -61,7 +62,7 @@ function modSave(rSource, rTarget, rRoll)
 			end
 		end
 	end
-	
+
 	if rSource then
 		local bEffects = false;
 
@@ -80,7 +81,7 @@ function modSave(rSource, rTarget, rRoll)
 		if nEffectCount > 0 then
 			bEffects = true;
 		end
-		
+
 		-- Get condition modifiers
 		if EffectManager5E.hasEffect(rSource, "ADVSAV", rTarget) then
 			bADV = true;
@@ -144,7 +145,7 @@ function modSave(rSource, rTarget, rRoll)
 				bDIS = true;
 			end
 		end
-		if sSave == "dexterity" and EffectManager5E.hasEffectCondition(rSource, "Dodge") and 
+		if sSave == "dexterity" and EffectManager5E.hasEffectCondition(rSource, "Dodge") and
 				not (EffectManager5E.hasEffectCondition(rSource, "Paralyzed") or
 				EffectManager5E.hasEffectCondition(rSource, "Stunned") or
 				EffectManager5E.hasEffectCondition(rSource, "Unconscious") or
@@ -216,7 +217,7 @@ function modSave(rSource, rTarget, rRoll)
 				nAddMod = nAddMod + nBonusStat;
 			end
 		end
-		
+
 		-- Get exhaustion modifiers
 		local nExhaustMod, nExhaustCount = EffectManager5E.getEffectsBonus(rSource, {"EXHAUSTION"}, true);
 		if nExhaustCount > 0 then
@@ -262,7 +263,7 @@ function modSave(rSource, rTarget, rRoll)
 			bADV = true;
 			rRoll.sDesc = rRoll.sDesc .. " [" .. CharManager.FEAT_WAR_CASTER:upper() .. "]";
 		end
-		
+
 		-- If effects apply, then add note
 		if bEffects then
 			for _, vDie in ipairs(aAddDice) do
@@ -273,7 +274,7 @@ function modSave(rSource, rTarget, rRoll)
 				end
 			end
 			rRoll.nMod = rRoll.nMod + nAddMod;
-			
+
 			local sEffects = "";
 			local sMod = StringManager.convertDiceToString(aAddDice, nAddMod, true);
 			if sMod ~= "" then
@@ -284,7 +285,7 @@ function modSave(rSource, rTarget, rRoll)
 			rRoll.sDesc = rRoll.sDesc .. " " .. sEffects;
 		end
 	end
-	
+
 	if rRoll.sSaveDesc then
 		local sEffectsTag = Interface.getString("effects_tag");
 		local sDCEffect = rRoll.sSaveDesc:match("%[" .. sEffectsTag .. " ([+-]?%d+)%]")
@@ -301,10 +302,10 @@ function modSave(rSource, rTarget, rRoll)
 		rRoll.nMod = rRoll.nMod + nCover;
 		rRoll.sDesc = rRoll.sDesc .. string.format(" [COVER +%d]", nCover);
 	end
-	
+
 	ActionsManager2.encodeDesktopMods(rRoll);
 	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
-	
+
 	if bAutoFail then
 		rRoll.sDesc = rRoll.sDesc .. " [AUTOFAIL]";
 	end
