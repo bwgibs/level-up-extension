@@ -4,6 +4,7 @@
 --
 
 function onInit()
+	ActionCheck.modRoll = modRoll;
 	ActionsManager.unregisterModHandler("check");
 	ActionsManager.registerModHandler("check", modRoll);
 end
@@ -12,7 +13,7 @@ function modRoll(rSource, rTarget, rRoll)
 	local aAddDesc = {};
 	local aAddDice = {};
 	local nAddMod = 0;
-	
+
 	local bADV = false;
 	local bDIS = false;
 	if rRoll.sDesc:match(" %[ADV%]") then
@@ -61,7 +62,7 @@ function modRoll(rSource, rTarget, rRoll)
 		if (nEffectCount > 0) then
 			bEffects = true;
 		end
-		
+
 		-- Get condition modifiers
 		if EffectManager5E.hasEffectCondition(rSource, "ADVCHK") then
 			bADV = true;
@@ -123,7 +124,7 @@ function modRoll(rSource, rTarget, rRoll)
 			bEffects = true;
 			nAddMod = nAddMod + nBonusStat;
 		end
-		
+
 		-- Get exhaustion modifiers
 		local nExhaustMod, nExhaustCount = EffectManager5E.getEffectsBonus(rSource, {"EXHAUSTION"}, true);
 		if nExhaustCount > 0 then
@@ -132,7 +133,7 @@ function modRoll(rSource, rTarget, rRoll)
 				bDIS = true;
 			end
 		end
-		
+
 		-- Level Up
 		-- Check for expertise die
 		if not EffectManager5E.hasEffectCondition(rSource, "Rattled") then
@@ -176,7 +177,7 @@ function modRoll(rSource, rTarget, rRoll)
 			table.insert(aAddDesc, sEffects);
 		end
 	end
-	
+
 	if #aAddDesc > 0 then
 		rRoll.sDesc = rRoll.sDesc .. " " .. table.concat(aAddDesc, " ");
 	end
@@ -189,6 +190,6 @@ function modRoll(rSource, rTarget, rRoll)
 		end
 	end
 	rRoll.nMod = rRoll.nMod + nAddMod;
-	
+
 	ActionsManager2.encodeAdvantage(rRoll, bADV, bDIS);
 end
