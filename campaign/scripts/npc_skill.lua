@@ -30,7 +30,7 @@ function parseComponents()
 	local aClauses, aClauseStats = StringManager.split(getValue(), ",;\r", true);
 	-- Check each comma-separated string for a potential skill roll or auto-complete opportunity
 	for i = 1, #aClauses do
-		local nStarts, nEnds, sLabel, sSign, sMod, sDice = string.find(aClauses[i], "([%w%s\(\)]*[%w\(\)]+)%s*([%+%-–]?)(%d*)([%w%s%+%(%)]*)");
+		local nStarts, nEnds, sLabel, sSign, sMod, sDice = string.find(aClauses[i], "([%w%s%(%)]*[%w%(%)]+)%s*([%+%-ï¿½]?)(%d*)([%w%s%+%(%)]*)");
 		if nStarts then
 			-- Calculate modifier based on mod value and sign value, if any
 			local nAllowRoll = 0;
@@ -38,7 +38,7 @@ function parseComponents()
 			if sMod ~= "" then
 				nAllowRoll = 1;
 				nMod = tonumber(sMod) or 0;
-				if sSign == "-" or sSign == "–" then
+				if sSign == "-" or sSign == "ï¿½" then
 					nMod = 0 - nMod;
 				end
 			end
