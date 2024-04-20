@@ -11,14 +11,14 @@
 		<script file="campaign/scripts/npc_main.lua" />
 		<sheetdata>
 			<anchor_column name="columnanchor" />
-
+			
 			<label_column name="nonid_name_label">
 				<static textres="npc_label_unidentified" />
 			</label_column>
 			<string_columnh name="nonid_name" />
 
 			<line_column name="divider" />
-
+			
 			<label_column name="size_label">
 				<static textres="npc_label_size" />
 			</label_column>
@@ -29,7 +29,7 @@
 					end
 				</script>
 			</string_columnh>
-
+			
 			<label_column name="type_label">
 				<static textres="npc_label_type" />
 			</label_column>
@@ -41,7 +41,7 @@
 					end
 				</script>
 			</string_columnh>
-
+			
 			<label_column name="alignment_label">
 				<static textres="npc_label_alignment" />
 			</label_column>
@@ -52,16 +52,16 @@
 					end
 				</script>
 			</string_columnh>
-
+			
 			<label_column name="summary_label">
 				<anchored>
 					<top relation="relative" />
 				</anchored>
 				<font>reference-b-large</font>
 			</label_column>
-
+			
 			<line_column />
-
+			
 			<label_column name="ac_label">
 				<static textres="armorclass" />
 			</label_column>
@@ -90,7 +90,7 @@
 			<string_column name="speed" />
 
 			<line_column />
-
+			
 			<number_npc_abilityscore name="strength" source="abilities.strength.score">
 				<anchored merge="replace" width="40" height="30">
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="12" />
@@ -114,7 +114,7 @@
 				<anchored to="strength" />
 				<target>strength</target>
 			</button_npcabilitysave>
-
+			
 			<number_npc_abilityscore name="dexterity" source="abilities.dexterity.score">
 				<anchored merge="replace" to="strength" width="40" height="30">
 					<top />
@@ -234,13 +234,13 @@
 				<anchored to="charisma" />
 				<target>charisma</target>
 			</button_npcabilitysave>
-
+			
 			<line_column>
 				<anchored>
 					<top parent="columnanchor" anchor="bottom" relation="relative" offset="12" />
 				</anchored>
 			</line_column>
-
+			
 			<label_column name="savingthrows_label">
 				<static textres="npc_label_savingthrows" />
 			</label_column>
@@ -254,46 +254,46 @@
 			<label_column name="skills_label">
 				<static textres="npc_label_skills" />
 			</label_column>
-			<string_columnh name="skills" >
+			<string_columnh_multiroll name="skills" >
 				<script file="campaign/scripts/npc_skill.lua" />
-			</string_columnh>
-
+			</string_columnh_multiroll>
+			
 			<label_column name="damagevulnerabilities_label">
 				<static textres="npc_label_damagevulnerabilities" />
 				<tooltip textres="npc_tooltip_damagevulnerabilities" />
 			</label_column>
 			<string_columnh_npc_specialdef name="damagevulnerabilities" />
-
+			
 			<label_column name="damageresistances_label">
 				<static textres="npc_label_damageresistances" />
 				<tooltip textres="npc_tooltip_damageresistances" />
 			</label_column>
 			<string_columnh_npc_specialdef name="damageresistances" />
-
+			
 			<label_column name="damageimmunities_label">
 				<static textres="npc_label_damageimmunities" />
 				<tooltip textres="npc_tooltip_damageimmunities" />
 			</label_column>
 			<string_columnh_npc_specialdef name="damageimmunities" />
-
+			
 			<label_column name="conditionimmunities_label">
 				<static textres="npc_label_conditionimmunities" />
 				<tooltip textres="npc_tooltip_conditionimmunities" />
 			</label_column>
 			<string_columnh_npc_specialdef name="conditionimmunities" />
-
+						
 			<label_column name="senses_label">
 				<static textres="npc_label_senses" />
 			</label_column>
 			<string_columnh name="senses">
 				<delaykeyupdate />
 			</string_columnh>
-
+			
 			<label_column name="languages_label">
 				<static textres="npc_label_languages" />
 			</label_column>
 			<string_columnh name="languages" />
-
+			
 			<label_column name="cr_label">
 				<static textres="npc_label_challenge" />
 			</label_column>
@@ -313,7 +313,7 @@
 					end
 				</script>
 			</string_column>
-
+			
 			<label name="profbonus_label">
 				<anchored to="cr">
 					<top />
@@ -328,7 +328,7 @@
 				</anchored>
 				<displaysign />
 			</numberc_static>
-
+			
 			<label_column_right name="xp_label">
 				<anchored to="cr" />
 				<static textres="xp" />
@@ -336,12 +336,12 @@
 			<number_column_right name="xp">
 				<anchored to="cr" />
 			</number_column_right>
-
-			<header_column name="header_traits">
+			
+			<header_column name="traits_header">
 				<static textres="npc_header_traits"/>
 			</header_column>
 			<button_iedit name="traits_iedit">
-				<anchored to="header_traits" position="righthigh" offset="-20,0" />
+				<anchored to="traits_header" position="righthigh" offset="-20,0" />
 				<target>traits</target>
 			</button_iedit>
 			<button_iadd name="traits_iadd">
@@ -352,12 +352,12 @@
 				<datasource>.traits</datasource>
 				<class>npc_power</class>
 			</list_npcactions>
-
-			<header_column name="header_actions">
+			
+			<header_column name="actions_header">
 				<static textres="npc_header_actions" />
 			</header_column>
 			<button_iedit name="actions_iedit">
-				<anchored to="header_actions" position="righthigh" offset="-20,0" />
+				<anchored to="actions_header" position="righthigh" offset="-20,0" />
 				<target>actions</target>
 			</button_iedit>
 			<button_iadd name="actions_iadd">
@@ -369,11 +369,11 @@
 				<class>npc_power</class>
 			</list_npcactions>
 
-			<header_column name="header_bonusactions">
+			<header_column name="bonusactions_header">
 				<static textres="npc_header_bonusactions" />
 			</header_column>
 			<button_iedit name="bonusactions_iedit">
-				<anchored to="header_bonusactions" position="righthigh" offset="-20,0" />
+				<anchored to="bonusactions_header" position="righthigh" offset="-20,0" />
 				<target>bonusactions</target>
 			</button_iedit>
 			<button_iadd name="bonusactions_iadd">
@@ -385,11 +385,11 @@
 				<class>npc_power</class>
 			</list_npcactions>
 
-			<header_column name="header_reactions">
+			<header_column name="reactions_header">
 				<static textres="npc_header_reactions" />
 			</header_column>
 			<button_iedit name="reactions_iedit">
-				<anchored to="header_reactions" position="righthigh" offset="-20,0" />
+				<anchored to="reactions_header" position="righthigh" offset="-20,0" />
 				<target>reactions</target>
 			</button_iedit>
 			<button_iadd name="reactions_iadd">
@@ -401,11 +401,11 @@
 				<class>npc_power</class>
 			</list_npcactions>
 
-			<header_column name="header_legendaryactions">
+			<header_column name="legendaryactions_header">
 				<static textres="npc_header_legendaryactions" />
 			</header_column>
 			<button_iedit name="legendaryactions_iedit">
-				<anchored to="header_legendaryactions" position="righthigh" offset="-20,0" />
+				<anchored to="legendaryactions_header" position="righthigh" offset="-20,0" />
 				<target>legendaryactions</target>
 			</button_iedit>
 			<button_iadd name="legendaryactions_iadd">
@@ -417,11 +417,11 @@
 				<class>npc_power</class>
 			</list_npcactions>
 
-			<header_column name="header_lairactions">
+			<header_column name="lairactions_header">
 				<static textres="npc_header_lairactions" />
 			</header_column>
 			<button_iedit name="lairactions_iedit">
-				<anchored to="header_lairactions" position="righthigh" offset="-20,0" />
+				<anchored to="lairactions_header" position="righthigh" offset="-20,0" />
 				<target>lairactions</target>
 			</button_iedit>
 			<button_iadd name="lairactions_iadd">
@@ -433,7 +433,7 @@
 				<class>npc_power</class>
 			</list_npcactions>
 
-			<header_column name="header_innatespells">
+			<header_column name="innatespells_header">
 				<static textres="npc_header_innatespells" />
 				<script>
 					function onDrop(x, y, draginfo)
@@ -449,7 +449,7 @@
 				</script>
 			</header_column>
 			<button_iedit name="innatespells_iedit">
-				<anchored to="header_innatespells" position="righthigh" offset="-20,0" />
+				<anchored to="innatespells_header" position="righthigh" offset="-20,0" />
 				<target>innatespells</target>
 			</button_iedit>
 			<button_iadd name="innatespells_iadd">
@@ -473,11 +473,11 @@
 				</script>
 			</list_npcactions>
 
-			<header_column name="header_spells">
+			<header_column name="spells_header">
 				<static textres="npc_header_spells" />
 			</header_column>
 			<button_iedit name="spells_iedit">
-				<anchored to="header_spells" position="righthigh" offset="-20,0" />
+				<anchored to="spells_header" position="righthigh" offset="-20,0" />
 				<target>spells</target>
 			</button_iedit>
 			<button_iadd name="spells_iadd">
@@ -497,7 +497,7 @@
 				<class>npc_power</class>
 				<script>
 					function onListChanged()
-						window.spellslots.setVisible(getWindowCount() > 0);
+						window.spellslots.setVisible(not isEmpty());
 					end
 				</script>
 			</list_npcactions>
