@@ -4,6 +4,7 @@
 --
 
 function onInit()
+	ActionSkill.modRoll = modRoll;
 	ActionsManager.unregisterModHandler("skill");
 	ActionsManager.registerModHandler("skill", modRoll);
 

@@ -4,6 +4,7 @@
 --
 
 function onInit()
+	ActionCheck.modRoll = modRoll;
 	ActionsManager.unregisterModHandler("check");
 	ActionsManager.registerModHandler("check", modRoll);
 end

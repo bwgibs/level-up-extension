@@ -4,6 +4,7 @@
 --
 
 function onInit()
+	ActionAttack.modAttack = modAttack;
 	ActionsManager.unregisterModHandler("attack")
 	ActionsManager.registerModHandler("attack", modAttack);
 end

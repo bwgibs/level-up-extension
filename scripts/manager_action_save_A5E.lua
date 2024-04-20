@@ -4,6 +4,7 @@
 --
 
 function onInit()
+	ActionSave.modSave = modSave;
 	ActionsManager.unregisterModHandler("save");
 	ActionsManager.unregisterModHandler("death");
 	ActionsManager.unregisterModHandler("death_auto");
