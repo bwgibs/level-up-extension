@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 
 <root version="3.3" release="2">
-	<announcement text="Level Up: Advanced 5th Edition extension (2023-04-23) for Fantasy Grounds\rCopyright 2022 Smiteworks USA, LLC" font="emotefont" icon="rulesetlogo_CoreRPG" />
+	<announcement text="Level Up: Advanced 5th Edition extension (2024-04-27) for Fantasy Grounds\rCopyright 2022 Smiteworks USA, LLC" font="emotefont" icon="rulesetlogo_CoreRPG" />
 
 	<properties>
 		<name>Feature: Level Up Advanced 5th Edition</name>
