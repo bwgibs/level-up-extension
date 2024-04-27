@@ -1,198 +1,78 @@
---
--- Please see the license.html file included with this distribution for
+-- 
+-- Please see the license.html file included with this distribution for 
 -- attribution and copyright information.
 --
 
-local bParsed = false;
-local aComponents = {};
-
--- The nDragMod and sDragLabel and aDragDice fields keep track of the entry under the cursor
-local sDragLabel = nil;
-local nDragMod = nil;
-local aDragDice = nil;
-local bDragging = false;
-
-function getCompletion(s)
-	-- Find a matching completion for the given string
-	for k,_ in pairs(DataCommon.skilldata) do
-		if string.lower(s) == string.lower(string.sub(k, 1, #s)) then
-			return string.sub(k, #s + 1);
-		end
+function parseAction(s)
+	if not s then
+		return nil;
 	end
-
-	return "";
-end
-
-function parseComponents()
-	aComponents = {};
-
-	-- Get the comma-separated strings
-	local aClauses, aClauseStats = StringManager.split(getValue(), ",;\r", true);
-	-- Check each comma-separated string for a potential skill roll or auto-complete opportunity
-	for i = 1, #aClauses do
-		local nStarts, nEnds, sLabel, sSign, sMod, sDice = string.find(aClauses[i], "([%a%s%(%)]*[%a%(%)]+)%s*([%+%-–]?)(%d*)([%w%s%+%(%)]*)");
-		if nStarts then
-			-- Calculate modifier based on mod value and sign value, if any
-			local nAllowRoll = 0;
-			local nMod = 0;
-			if sMod ~= "" then
-				nAllowRoll = 1;
-				nMod = tonumber(sMod) or 0;
-				if sSign == "-" or sSign == "–" then
-					nMod = 0 - nMod;
-				end
-			end
-
-			-- Level Up
-			local aDice = {};
-			-- Get expertise dice, if any
-			if sDice then
-				sDice = sDice:match("%+(%w+)");
-				if StringManager.isDiceString(sDice) then
-					aDice = StringManager.convertStringToDice(sDice);
-				end
-			end
-
-			-- Insert the possible skill into the skill list
-			table.insert(aComponents, {nStart = aClauseStats[i].startpos, nLabelEnd = aClauseStats[i].startpos + nEnds, nEnd = aClauseStats[i].endpos, sLabel = sLabel, nMod = nMod, aDice = aDice, nAllowRoll = nAllowRoll });
-		end
+	local nStarts, nEnds, sLabel, sMod, sDice = s:find("([%a%s%(%)]*[%a%(%)]+)%s*([%+%-–]?%d*)%s*([%w%+%(%)]*)");
+	if not nStarts or sMod == "" then
+		return nil;
 	end
-
-	bParsed = true;
+	return ActionSkill.getNPCRoll(self.getActor(), sLabel, tonumber(sMod) or 0, sDice);
 end
 
 function onChar(nKeyCode)
-	bParsed = false;
-
-	local nCursor = getCursorPosition();
-	local sValue = getValue();
-	local sCompletion;
+	super.onChar(nKeyCode);
 
 	-- If alpha character, then build a potential autocomplete
 	if ((nKeyCode >= 65) and (nKeyCode <= 90)) or ((nKeyCode >= 97) and (nKeyCode <= 122)) then
-		-- Parse the value string
-		parseComponents();
+		self.checkAutoComplete();
+	-- If space, then perform autocomplete
+	elseif (nKeyCode == 32) then
+		self.performAutoComplete();
+	end
+end
+function checkAutoComplete()
+	local nCursor = getCursorPosition();
+	local s = getValue();
 
-		-- Build auto-complete for the current string
-		for i = 1, #aComponents, 1 do
-			if nCursor == aComponents[i].nLabelEnd then
-				sCompletion = getCompletion(aComponents[i].sLabel);
+	local tStrings, tStringStats = StringManager.split(s, self.getActionSeparators(), true);
+	for i = 1, #tStrings do
+		if nCursor == tStringStats[i].endpos then
+			if tStrings[i]:match("^([%a%s%(%)]*[%a%(%)]+)$") then
+				local sCompletion = self.getCompletion(tStrings[i]);
 				if sCompletion ~= "" then
-					local sNewValue = string.sub(sValue, 1, getCursorPosition()-1) .. sCompletion .. string.sub(sValue, getCursorPosition());
+					local sNewValue = s:sub(1, nCursor-1) .. sCompletion .. s:sub(nCursor);
 					setValue(sNewValue);
 					setSelectionPosition(nCursor + #sCompletion);
 				end
-
-				return;
 			end
+			return;
 		end
+	end
+end
+function performAutoComplete()
+	local nLastCursor = getCursorPosition() - 1;
+	if nLastCursor <= 0 then
+		return;
+	end
+	local s = getValue();
 
-	-- Or else if space character, then finish the autocomplete
-	else
-		if ((nKeyCode == 32) and (nCursor >= 2)) then
-			-- Parse the value string
-			parseComponents();
-
-			-- Find any string we may have just auto-completed
-			local nLastCursor = nCursor - 1;
-			for i = 1, #aComponents, 1 do
-				if nCursor - 1 == aComponents[i].nLabelEnd then
-					sCompletion = getCompletion(aComponents[i].sLabel);
-					if sCompletion ~= "" then
-						local sNewValue = string.sub(sValue, 1, nLastCursor - 1) .. sCompletion .. string.sub(sValue, nLastCursor);
-						setValue(sNewValue);
-						setCursorPosition(nCursor + #sCompletion);
-						setSelectionPosition(nCursor + #sCompletion);
-					end
-
-					return;
+	local tStrings, tStringStats = StringManager.split(s, self.getActionSeparators(), true);
+	for i = 1, #tStrings do
+		if nLastCursor == tStringStats[i].endpos then
+			if tStrings[i]:match("^([%a%s%(%)]*[%a%(%)]+)$") then
+				local sCompletion = self.getCompletion(tStrings[i]);
+				if sCompletion ~= "" then
+					local sNewValue = s:sub(1, nLastCursor - 1) .. sCompletion .. s:sub(nLastCursor);
+					setValue(sNewValue);
+					setCursorPosition(nLastCursor + 1 + #sCompletion);
+					setSelectionPosition(nLastCursor + 1 + #sCompletion);
 				end
 			end
+			return;
 		end
 	end
 end
-
--- Reset selection when the cursor leaves the control
-function onHover(bOnControl)
-	if bDragging or bOnControl then
-		return;
-	end
-
-	sDragLabel = nil;
-	nDragMod = nil;
-	aDragDice = nil;
-	setSelectionPosition(0);
-end
-
--- Hilight skill hovered on
-function onHoverUpdate(x, y)
-	if bDragging then
-		return;
-	end
-
-	if not bParsed then
-		parseComponents();
-	end
-	local nMouseIndex = getIndexAt(x, y);
-
-	for i = 1, #aComponents, 1 do
-		if aComponents[i].nAllowRoll == 1 then
-			if aComponents[i].nStart <= nMouseIndex and aComponents[i].nEnd > nMouseIndex then
-				setCursorPosition(aComponents[i].nStart);
-				setSelectionPosition(aComponents[i].nEnd);
-
-				sDragLabel = aComponents[i].sLabel;
-				nDragMod = aComponents[i].nMod;
-				aDragDice = aComponents[i].aDice;
-				setHoverCursor("hand");
-				return;
-			end
+function getCompletion(s)
+	local sLower = s:lower();
+	for k,_ in pairs(DataCommon.skilldata) do
+		if sLower == k:sub(1, #s):lower() then
+			return k:sub(#s + 1);
 		end
 	end
-
-	sDragLabel = nil;
-	nDragMod = nil;
-	aDragDice = nil;
-	setHoverCursor("arrow");
-end
-
-function action(draginfo)
-	if sDragLabel then
-		local rActor = ActorManager.resolveActor(window.getDatabaseNode());
-		ActionSkill.performNPCRoll(draginfo, rActor, sDragLabel, nDragMod, aDragDice);
-	end
-end
-
-function onDoubleClick(x, y)
-	action();
-	return true;
-end
-
-function onDragStart(button, x, y, draginfo)
-	action(draginfo);
-
-	bDragging = true;
-	setCursorPosition(0);
-
-	return true;
-end
-
-function onDragEnd(draginfo)
-	bDragging = false;
-end
-
--- Suppress default processing to support dragging
-function onClickDown(button, x, y)
-	return true;
-end
-
--- On mouse click, set focus, set cursor position and clear selection
-function onClickRelease(button, x, y)
-	setFocus();
-
-	local n = getIndexAt(x, y);
-	setSelectionPosition(n);
-	setCursorPosition(n);
-
-	return true;
+	return "";
 end
