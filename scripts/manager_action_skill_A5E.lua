@@ -8,31 +8,33 @@ function onInit()
 	ActionsManager.unregisterModHandler("skill");
 	ActionsManager.registerModHandler("skill", modRoll);
 
-	ActionSkill.performNPCRoll = performNPCRoll;
+	ActionSkill.getNPCRoll = getNPCRoll;
 end
 
-function performNPCRoll(draginfo, rActor, sSkill, nSkill, aSkill)
-	local rRoll = {};
-	rRoll.sType = "skill";
-	rRoll.aDice = { "d20" };
+function getNPCRoll(rActor, sSkill, nSkill, sExpertise)
+	local aDice = { "d20" };
+	
+	if sExpertise and not EffectManager5E.hasEffectCondition(rActor, "Rattled") then
+		local sDice = sExpertise:match("%+([d%d]+)");
+		
+		if StringManager.isDiceString(sDice) then
+			local aExpertise = StringManager.convertStringToDice(sDice);
 
-	rRoll.sDesc = "[SKILL] " .. StringManager.capitalizeAll(sSkill);
-	rRoll.nMod = nSkill;
+			-- Add expertise dice
+			for _,vDie in ipairs(aExpertise) do
+				table.insert(aDice, "g" .. vDie:sub(2));
+			end
 
-	--Level Up
-	if aSkill and not EffectManager5E.hasEffectCondition(rActor, "Rattled") then
-		-- Add expertise dice
-		for _,vDie in ipairs(aSkill) do
-			table.insert(rRoll.aDice, "g" .. vDie:sub(2));
+			sSkill = sSkill .. " [EXPERTISE]";
 		end
-		rRoll.sDesc = rRoll.sDesc .. " [EXPERTISE]";
 	end
 
-	if Session.IsHost and CombatManager.isCTHidden(ActorManager.getCTNode(rActor)) then
-		rRoll.bSecret = true;
-	end
-
-	ActionsManager.performAction(draginfo, rActor, rRoll);
+	return {
+		sType = "skill",
+		aDice = aDice,
+		sDesc = "[SKILL] " .. StringManager.capitalizeAll(sSkill),
+		nMod = nSkill,
+	};
 end
 
 function modRoll(rSource, rTarget, rRoll)
